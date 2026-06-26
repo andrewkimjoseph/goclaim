@@ -4,13 +4,18 @@ import { useRouter } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useSiweAuth } from "@/lib/hooks/useSiweAuth";
 import { useSession } from "@/lib/hooks/useSession";
+import { copy } from "@/lib/copy";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 type ConnectSignInProps = {
   onSuccess?: () => void;
   label?: string;
 };
 
-export function ConnectSignIn({ onSuccess, label = "Connect Wallet" }: ConnectSignInProps) {
+export function ConnectSignIn({
+  onSuccess,
+  label = copy.auth.connectWallet,
+}: ConnectSignInProps) {
   const router = useRouter();
   const { signIn, isLoading, error, isConnected, address } = useSiweAuth();
   const { authenticated, rootAddress, checked, refresh } = useSession();
@@ -30,22 +35,18 @@ export function ConnectSignIn({ onSuccess, label = "Connect Wallet" }: ConnectSi
   }
 
   if (!checked) {
-    return (
-      <p className="text-foreground/70 text-sm text-center">Checking session...</p>
-    );
+    return <LoadingSpinner label={copy.auth.checkingSession} />;
   }
 
   if (authenticated) {
     return (
       <div className="flex flex-col items-center gap-4">
         <button onClick={goToDashboard} className="btn-primary">
-          Go to Dashboard
+          {copy.auth.goToDashboard}
         </button>
         {isConnected && !walletMatchesSession && address && (
           <p className="text-foreground/60 text-xs text-center max-w-sm">
-            Connected wallet differs from your signed-in root (
-            {rootAddress?.slice(0, 6)}…{rootAddress?.slice(-4)}). Switch accounts
-            or sign in again to link on-chain.
+            {copy.auth.walletMismatch}
           </p>
         )}
         <ConnectButton.Custom>
@@ -55,7 +56,7 @@ export function ConnectSignIn({ onSuccess, label = "Connect Wallet" }: ConnectSi
             if (!connected) {
               return (
                 <button onClick={openConnectModal} className="btn-secondary text-sm">
-                  Connect wallet for on-chain actions
+                  {copy.auth.connectToFinishSetup}
                 </button>
               );
             }
@@ -101,7 +102,7 @@ export function ConnectSignIn({ onSuccess, label = "Connect Wallet" }: ConnectSi
                 </button>
               ) : chain.unsupported ? (
                 <button onClick={openChainModal} className="btn-secondary">
-                  Wrong network
+                  {copy.auth.wrongNetwork}
                 </button>
               ) : (
                 <div className="flex flex-col items-center gap-3">
@@ -119,7 +120,7 @@ export function ConnectSignIn({ onSuccess, label = "Connect Wallet" }: ConnectSi
                     }}
                     className="btn-primary disabled:opacity-50"
                   >
-                    {isLoading ? "Signing in..." : "Sign in to GoClaim"}
+                    {isLoading ? copy.auth.signingIn : copy.auth.signIn}
                   </button>
                 </div>
               )}
@@ -131,8 +132,13 @@ export function ConnectSignIn({ onSuccess, label = "Connect Wallet" }: ConnectSi
         <p className="text-red-300 text-sm text-center max-w-sm">{error}</p>
       )}
       {isConnected && !error && (
-        <p className="text-foreground/70 text-sm text-center">
-          Sign once — your session lasts 30 days
+        <p className="text-foreground/70 text-sm text-center max-w-sm">
+          {copy.auth.signInHint}
+        </p>
+      )}
+      {!isConnected && !error && (
+        <p className="text-foreground/60 text-xs text-center max-w-sm">
+          {copy.auth.sessionHint}
         </p>
       )}
     </div>

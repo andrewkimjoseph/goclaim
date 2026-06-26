@@ -18,7 +18,7 @@ const sans = Hanken_Grotesk({
 export const metadata: Metadata = {
   title: "GoClaim | Your UBI, on autopilot.",
   description:
-    "Automatically claim GoodDollar UBI daily. Connect your root wallet, link your agent, and earn hands-free.",
+    "GoClaim claims GoodDollar for you every day and sends G$ straight to your wallet.",
 };
 
 export const viewport: Viewport = {

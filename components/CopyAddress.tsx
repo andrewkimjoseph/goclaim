@@ -8,6 +8,11 @@ type CopyAddressProps = {
   hint?: string;
 };
 
+function truncateAddress(address: string) {
+  if (address.length <= 13) return address;
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
+
 export function CopyAddress({ address, label, hint }: CopyAddressProps) {
   const [copied, setCopied] = useState(false);
 
@@ -24,8 +29,13 @@ export function CopyAddress({ address, label, hint }: CopyAddressProps) {
           {label}
         </p>
       )}
-      <div className="flex items-center justify-between gap-2">
-        <code className="text-sm break-all font-mono">{address}</code>
+      <div className="flex items-center justify-between gap-2 min-w-0">
+        <code
+          className="text-xs font-mono text-foreground/90 truncate min-w-0 flex-1"
+          title={address}
+        >
+          {truncateAddress(address)}
+        </code>
         <button
           onClick={copy}
           className="shrink-0 text-xs font-display font-semibold text-primary hover:text-primary/80"

@@ -13,6 +13,7 @@ import { type Address, zeroAddress } from "viem";
 import { identityAbi } from "@/lib/onchain/abis/identity";
 import { IDENTITY_CONNECT_TARGET } from "@/lib/onchain/connectAgent";
 import { friendlyConnectError } from "@/lib/friendlyTxError";
+import { copy } from "@/lib/copy";
 
 type ConnectAgentButtonProps = {
   smartAccountAddress: Address;
@@ -20,6 +21,7 @@ type ConnectAgentButtonProps = {
   onConnected?: () => void;
   className?: string;
   label?: string;
+  showTechnicalDetails?: boolean;
 };
 
 export function ConnectAgentButton({
@@ -27,7 +29,8 @@ export function ConnectAgentButton({
   rootAddress,
   onConnected,
   className = "btn-primary",
-  label = "Connect simple smart account",
+  label = copy.connect.cta,
+  showTechnicalDetails = false,
 }: ConnectAgentButtonProps) {
   const { address, chainId, isConnected } = useAccount();
   const { switchChainAsync } = useSwitchChain();
@@ -81,12 +84,12 @@ export function ConnectAgentButton({
     setLocalError(null);
 
     if (!isConnected || !address) {
-      setLocalError("Connect your root wallet first.");
+      setLocalError(copy.connect.connectWalletFirst);
       return;
     }
 
     if (wrongWallet) {
-      setLocalError("Switch to the root wallet you signed in with.");
+      setLocalError(copy.connect.switchWallet);
       return;
     }
 
@@ -98,7 +101,6 @@ export function ConnectAgentButton({
       writeContract({
         address: IDENTITY_CONNECT_TARGET,
         abi: identityAbi,
-        // Link the ERC-4337 simple smart account — never the agent EOA or root wallet.
         functionName: "connectAccount",
         args: [smartAccountAddress],
         chainId: celo.id,
@@ -111,7 +113,7 @@ export function ConnectAgentButton({
   if (alreadyLinked) {
     return (
       <p className="text-sm text-foreground/70 font-display font-semibold">
-        Simple smart account linked to your identity
+        {copy.connect.linked}
       </p>
     );
   }
@@ -120,9 +122,14 @@ export function ConnectAgentButton({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs text-foreground/60 text-center font-mono break-all">
-        connectAccount → {smartAccountAddress}
-      </p>
+      {showTechnicalDetails && (
+        <details className="text-xs text-foreground/60">
+          <summary className="cursor-pointer">{copy.connect.technicalDetails}</summary>
+          <p className="font-mono break-all mt-1">
+            {copy.connect.technicalLinking(smartAccountAddress)}
+          </p>
+        </details>
+      )}
       <button
         type="button"
         onClick={handleConnect}
@@ -131,17 +138,15 @@ export function ConnectAgentButton({
       >
         {isBusy
           ? isConfirming
-            ? "Confirming..."
-            : "Confirm in wallet..."
+            ? copy.connect.confirming
+            : copy.connect.confirmInWallet
           : label}
       </button>
       {localError && (
         <p className="text-red-400 text-sm text-center">{localError}</p>
       )}
       {wrongWallet && !localError && (
-        <p className="text-red-400 text-sm text-center">
-          Connected wallet does not match your signed-in root.
-        </p>
+        <p className="text-red-400 text-sm text-center">{copy.connect.wrongWallet}</p>
       )}
     </div>
   );

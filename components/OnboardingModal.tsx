@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import { type Address } from "viem";
 import { ConnectAgentButton } from "@/components/ConnectAgentButton";
-
-function truncateAddress(address: string) {
-  return `${address.slice(0, 6)}…${address.slice(-4)}`;
-}
+import { copy, formatClaimSchedule } from "@/lib/copy";
 
 type OnboardingModalProps = {
   smartAccountAddress: string;
@@ -26,10 +23,15 @@ export function OnboardingModal({
   onConnected,
 }: OnboardingModalProps) {
   const [linked, setLinked] = useState(linkComplete ?? false);
+  const [claimSchedule, setClaimSchedule] = useState<string>(copy.time.claimScheduleUtc);
 
   useEffect(() => {
     if (linkComplete) setLinked(true);
   }, [linkComplete]);
+
+  useEffect(() => {
+    setClaimSchedule(formatClaimSchedule());
+  }, []);
 
   function handleConnected() {
     setLinked(true);
@@ -40,32 +42,37 @@ export function OnboardingModal({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-background/80 p-4">
       <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto">
         <h2 className="font-display font-extrabold text-xl mb-4 text-foreground">
-          Set up your agent
+          {copy.onboarding.title}
         </h2>
 
         <ol className="space-y-4">
           <li className="flex gap-3">
             <span className="step-badge-done">1</span>
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="font-display font-bold text-foreground">
-                Simple smart account created
+                {copy.onboarding.step1.title}
               </p>
               <p className="text-sm text-foreground/70 mt-1">
-                GoClaim created an ERC-4337 agent for you. This is not your root
-                wallet — it is the contract that will claim UBI on your behalf.
+                {copy.onboarding.step1.body}
               </p>
-              <p className="text-xs font-display font-semibold text-foreground/60 mt-2">
-                Simple smart account
-              </p>
-              <code className="text-xs break-all block mt-1 bg-foreground/5 p-2 rounded text-foreground">
-                {smartAccountAddress}
-              </code>
-              {isCounterfactual && (
-                <p className="text-xs text-foreground/60 mt-2">
-                  Not deployed yet — Celoscan may show no contract code until the
-                  first claim. That does not mean this is your agent signer EOA.
-                </p>
-              )}
+              <details className="mt-3">
+                <summary className="text-xs font-display font-semibold text-primary cursor-pointer">
+                  {copy.onboarding.step1.showAddress}
+                </summary>
+                <code className="text-xs break-all block mt-2 bg-foreground/5 p-2 rounded text-foreground">
+                  {smartAccountAddress}
+                </code>
+                {isCounterfactual && (
+                  <div className="mt-2">
+                    <p className="text-xs font-display font-semibold text-foreground/60">
+                      {copy.onboarding.step1.celoscanTitle}
+                    </p>
+                    <p className="text-xs text-foreground/60 mt-1">
+                      {copy.onboarding.step1.celoscanBody}
+                    </p>
+                  </div>
+                )}
+              </details>
             </div>
           </li>
 
@@ -75,26 +82,27 @@ export function OnboardingModal({
             </span>
             <div className="flex-1 min-w-0">
               <p className="font-display font-bold text-foreground">
-                Link simple smart account
+                {copy.onboarding.step2.title}
               </p>
               <p className="text-sm text-foreground/70 mt-1">
-                Sign one transaction from your root wallet. GoodDollar Identity
-                will call{" "}
-                <span className="font-mono font-semibold text-foreground">
-                  connectAccount({truncateAddress(smartAccountAddress)})
-                </span>{" "}
-                — linking this smart account, not your root wallet and not the
-                hidden agent signer.
+                {copy.onboarding.step2.body}
               </p>
-              <div className="mt-3">
-                <ConnectAgentButton
-                  smartAccountAddress={smartAccountAddress as Address}
-                  rootAddress={rootAddress as Address | undefined}
-                  onConnected={handleConnected}
-                  className="btn-primary text-sm w-full"
-                  label="Connect simple smart account"
-                />
-              </div>
+              {!linked && (
+                <div className="mt-3">
+                  <ConnectAgentButton
+                    smartAccountAddress={smartAccountAddress as Address}
+                    rootAddress={rootAddress as Address | undefined}
+                    onConnected={handleConnected}
+                    className="btn-primary text-sm w-full"
+                    label={copy.onboarding.step2.cta}
+                  />
+                </div>
+              )}
+              {linked && (
+                <p className="text-sm text-foreground/70 font-display font-semibold mt-3">
+                  {copy.connect.linked}
+                </p>
+              )}
             </div>
           </li>
 
@@ -104,19 +112,19 @@ export function OnboardingModal({
             </span>
             <div>
               <p className="font-display font-bold text-foreground">
-                You&apos;re set
+                {copy.onboarding.step3.title}
               </p>
               <p className="text-sm text-foreground/70 mt-1">
                 {linked
-                  ? "Claiming starts tomorrow at 12 PM UTC. G$ will be forwarded to your root wallet automatically."
-                  : "Complete step 2 to enable daily claims at 12 PM UTC."}
+                  ? copy.onboarding.step3.bodyLinked(claimSchedule)
+                  : copy.onboarding.step3.bodyPending(claimSchedule)}
               </p>
             </div>
           </li>
         </ol>
 
         <button onClick={onClose} className="btn-primary w-full mt-6">
-          Go to Dashboard
+          {copy.onboarding.goToDashboard}
         </button>
       </div>
     </div>

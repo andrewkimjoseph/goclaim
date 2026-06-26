@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AgentStatusCard } from "@/components/AgentStatusCard";
@@ -8,7 +8,14 @@ import { ClaimHistoryTable } from "@/components/ClaimHistoryTable";
 import { CopyAddress } from "@/components/CopyAddress";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { ConnectAgentButton } from "@/components/ConnectAgentButton";
+import { SetupChecklist } from "@/components/SetupChecklist";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { type Address } from "viem";
+import { copy, formatClaimSchedule } from "@/lib/copy";
+
+function truncateAddress(address: string) {
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
 
 type AgentStatus = {
   hasAgent: boolean;
@@ -37,6 +44,14 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const autoOnboardingShown = useRef(false);
+  const [claimSchedule, setClaimSchedule] = useState<string>(
+    copy.time.claimScheduleUtc
+  );
+
+  useEffect(() => {
+    setClaimSchedule(formatClaimSchedule());
+  }, []);
 
   const fetchStatus = useCallback(async () => {
     setLoading(true);
@@ -63,12 +78,26 @@ function DashboardContent() {
     fetchStatus();
   }, [fetchStatus]);
 
+  const simpleSmartAccount =
+    status?.simpleSmartAccountAddress ?? status?.smartAccountAddress;
+  const linkComplete = status?.linkComplete ?? false;
+
   useEffect(() => {
-    const sa = status?.simpleSmartAccountAddress ?? status?.smartAccountAddress;
-    if (searchParams.get("onboarding") === "1" && sa) {
+    if (!simpleSmartAccount || linkComplete) {
+      if (linkComplete) setShowOnboarding(false);
+      return;
+    }
+
+    if (searchParams.get("onboarding") === "1") {
+      setShowOnboarding(true);
+      return;
+    }
+
+    if (!autoOnboardingShown.current) {
+      autoOnboardingShown.current = true;
       setShowOnboarding(true);
     }
-  }, [searchParams, status?.simpleSmartAccountAddress, status?.smartAccountAddress]);
+  }, [searchParams, simpleSmartAccount, linkComplete]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
@@ -78,7 +107,7 @@ function DashboardContent() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-foreground/70 font-display">Loading dashboard...</p>
+        <LoadingSpinner label={copy.dashboard.loading} />
       </div>
     );
   }
@@ -88,7 +117,7 @@ function DashboardContent() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6">
         <p className="text-red-300">{error ?? "Something went wrong"}</p>
         <Link href="/" className="btn-primary">
-          Back to home
+          {copy.dashboard.backToHome}
         </Link>
       </div>
     );
@@ -97,7 +126,7 @@ function DashboardContent() {
   if (!status.hasAgent) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6">
-        <p className="text-foreground/70 text-center">No agent wallet yet.</p>
+        <p className="text-foreground/70 text-center">{copy.dashboard.noAgent}</p>
         <button
           onClick={async () => {
             await fetch("/api/agent/create", {
@@ -108,15 +137,13 @@ function DashboardContent() {
           }}
           className="btn-primary"
         >
-          Create Agent
+          {copy.dashboard.setupGoClaim}
         </button>
       </div>
     );
   }
 
   const linkStatus = status.linkStatus ?? "pending";
-  const simpleSmartAccount =
-    status.simpleSmartAccountAddress ?? status.smartAccountAddress;
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,17 +159,51 @@ function DashboardContent() {
             onClick={handleLogout}
             className="text-foreground/70 text-sm hover:text-foreground"
           >
-            Sign out
+            {copy.dashboard.signOut}
           </button>
         </header>
 
         <main className="flex-1 px-4 py-6 space-y-4">
-          <div>
-            <p className="text-foreground/70 text-sm">Welcome back</p>
-            <h1 className="font-display font-extrabold text-2xl text-foreground tracking-tight">
-              Dashboard
-            </h1>
+          <div className="space-y-1">
+            <p className="font-display font-bold text-lg text-foreground tracking-tight">
+              {linkComplete
+                ? copy.dashboard.headlineActive
+                : copy.dashboard.headlineSetup}
+            </p>
+            <p className="text-sm text-foreground/70">
+              {linkComplete
+                ? copy.dashboard.subheadActive(claimSchedule)
+                : copy.dashboard.subheadSetup}
+            </p>
+            {status.rootAddress && (
+              <p
+                className="text-xs font-mono text-foreground/45 pt-0.5"
+                title={status.rootAddress}
+              >
+                {truncateAddress(status.rootAddress)}
+              </p>
+            )}
           </div>
+
+          {!linkComplete && (
+            <div className="card border-primary/30 bg-primary/5">
+              <p className="text-sm text-foreground/80 mb-3">
+                {copy.dashboard.finishSetupBanner}
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowOnboarding(true)}
+                className="btn-primary w-full text-sm"
+              >
+                {copy.dashboard.finishSetupCta}
+              </button>
+            </div>
+          )}
+
+          <SetupChecklist
+            linkComplete={linkComplete}
+            onFinishSetup={() => setShowOnboarding(true)}
+          />
 
           <AgentStatusCard
             status={
@@ -157,41 +218,44 @@ function DashboardContent() {
           />
 
           <div className="card">
-            <p className="text-xs text-foreground/60">Lifetime successful claims</p>
+            <p className="text-xs text-foreground/60">{copy.dashboard.totalClaims}</p>
             <p className="font-display font-extrabold text-3xl text-primary">
               {status.lifetimeClaims ?? 0}
             </p>
             {status.lastClaimedAt && (
               <p className="text-xs text-foreground/60 mt-1">
-                Last claimed:{" "}
+                {copy.dashboard.lastClaimed}:{" "}
                 {new Date(status.lastClaimedAt).toLocaleString()}
               </p>
             )}
           </div>
 
           {simpleSmartAccount && (
-            <CopyAddress
-              address={simpleSmartAccount}
-              label="Simple smart account (connectAccount target)"
-              hint={
-                status.isCounterfactual
-                  ? "This ERC-4337 account is not deployed yet — no contract code on Celoscan until the first claim. That is normal; it is still not the agent signer EOA."
-                  : "This is your deployed ERC-4337 agent — not your root wallet or agent signer."
-              }
-            />
+            <details className="card">
+              <summary className="text-xs font-display font-semibold text-foreground/60 cursor-pointer">
+                {copy.dashboard.botLabel}
+              </summary>
+              <p className="text-xs text-foreground/60 mt-2 mb-2">
+                {copy.dashboard.botHint}
+              </p>
+              <CopyAddress address={simpleSmartAccount} />
+            </details>
           )}
 
           {status.rootAddress && (
-            <CopyAddress address={status.rootAddress} label="Root wallet" />
+            <CopyAddress
+              address={status.rootAddress}
+              label={copy.dashboard.walletLabel}
+            />
           )}
 
-          {!status.linkComplete && simpleSmartAccount && (
+          {!linkComplete && simpleSmartAccount && (
             <ConnectAgentButton
               smartAccountAddress={simpleSmartAccount as Address}
               rootAddress={status.rootAddress as Address | undefined}
               onConnected={fetchStatus}
               className="btn-primary block text-center w-full"
-              label="Connect simple smart account"
+              showTechnicalDetails
             />
           )}
 
@@ -204,7 +268,7 @@ function DashboardContent() {
           smartAccountAddress={simpleSmartAccount}
           isCounterfactual={status.isCounterfactual}
           rootAddress={status.rootAddress}
-          linkComplete={status.linkComplete}
+          linkComplete={linkComplete}
           onConnected={fetchStatus}
           onClose={() => {
             setShowOnboarding(false);
@@ -221,7 +285,7 @@ export default function DashboardPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <p className="text-foreground/70 font-display">Loading...</p>
+          <LoadingSpinner label={copy.dashboard.loading} />
         </div>
       }
     >
