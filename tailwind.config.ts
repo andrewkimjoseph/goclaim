@@ -9,14 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#141820",
-        surface: "#2A3142",
-        primary: "#E8A838",
-        foreground: "#F5F0E6",
+        background: "#FFFFFF",
+        surface: "#FFFFFF",
+        foreground: "#000000",
+        shell: "#085020",
+        primary: "#F83028",
+        accent: "#80B040",
+        fleshLight: "#FF7878",
+        cream: "#D0C098",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
         sans: ["var(--font-sans)", "sans-serif"],
+      },
+      boxShadow: {
+        brutal: "4px 4px 0 0 #000000",
+        "brutal-sm": "3px 3px 0 0 #000000",
+      },
+      borderRadius: {
+        brutal: "2px",
       },
     },
   },

@@ -26,6 +26,9 @@ export const copy = {
   },
   auth: {
     connectWallet: "Connect GoodDollar wallet",
+    walletCardLabel: "Your GoodDollar wallet",
+    walletCardHint: "Connect to begin",
+    changeWallet: "Change wallet",
     signIn: "Sign in",
     signingIn: "Signing in...",
     signInHint:
@@ -87,7 +90,7 @@ export const copy = {
     lastClaimed: "Last claimed",
     botLabel: "GoClaim bot",
     botHint:
-      "This bot claims for you automatically — not the wallet where you receive G$.",
+      "This bot claims for you automatically.",
     walletLabel: "Your wallet (receives G$)",
     finishSetupBanner: "One step left: link your bot to GoodDollar",
     finishSetupCta: "Finish setup",

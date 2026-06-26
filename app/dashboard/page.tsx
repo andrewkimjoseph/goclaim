@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { BrandLogo } from "@/components/BrandLogo";
 import { AgentStatusCard } from "@/components/AgentStatusCard";
 import { ClaimHistoryTable } from "@/components/ClaimHistoryTable";
 import { CopyAddress } from "@/components/CopyAddress";
@@ -114,7 +115,7 @@ function DashboardContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="app-shell items-center justify-center">
         <LoadingSpinner label={copy.dashboard.loading} />
       </div>
     );
@@ -122,9 +123,9 @@ function DashboardContent() {
 
   if (error || !status) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6">
-        <p className="text-red-300">{error ?? "Something went wrong"}</p>
-        <Link href="/" className="btn-primary">
+      <div className="app-shell items-center justify-center gap-4">
+        <p className="text-red-200 text-center">{error ?? "Something went wrong"}</p>
+        <Link href="/" className="btn-hero-primary">
           {copy.dashboard.backToHome}
         </Link>
       </div>
@@ -133,8 +134,8 @@ function DashboardContent() {
 
   if (!status.hasAgent) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6">
-        <p className="text-foreground/70 text-center">{copy.dashboard.noAgent}</p>
+      <div className="app-shell items-center justify-center gap-4">
+        <p className="text-white/80 text-center">{copy.dashboard.noAgent}</p>
         <button
           onClick={async () => {
             await fetch("/api/agent/create", {
@@ -143,7 +144,7 @@ function DashboardContent() {
             });
             fetchStatus();
           }}
-          className="btn-primary"
+          className="btn-hero-primary"
         >
           {copy.dashboard.setupGoClaim}
         </button>
@@ -154,122 +155,117 @@ function DashboardContent() {
   const linkStatus = status.linkStatus ?? "pending";
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-[460px] mx-auto min-h-screen flex flex-col">
-        <header className="px-4 py-4 flex items-center justify-between border-b border-foreground/20">
-          <Link
-            href="/"
-            className="font-display font-extrabold text-xl text-foreground"
-          >
-            GoClaim
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="text-foreground/70 text-sm hover:text-foreground"
-          >
-            {copy.dashboard.signOut}
-          </button>
-        </header>
+    <div className="app-shell pb-6">
+      <header className="header-bar">
+        <Link href="/">
+          <BrandLogo size="nav" />
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="text-white/80 text-sm font-display font-semibold hover:text-white"
+        >
+          {copy.dashboard.signOut}
+        </button>
+      </header>
 
-        <main className="flex-1 px-4 py-6 space-y-4">
-          <div className="space-y-1">
-            <p className="font-display font-bold text-lg text-foreground tracking-tight">
-              {linkComplete
-                ? copy.dashboard.headlineActive
-                : copy.dashboard.headlineSetup}
-            </p>
-            <p className="text-sm text-foreground/70">
-              {linkComplete
-                ? copy.dashboard.subheadActive(claimSchedule)
-                : copy.dashboard.subheadSetup}
-            </p>
-            {status.rootAddress && (
-              <p
-                className="text-xs font-mono text-foreground/45 pt-0.5"
-                title={status.rootAddress}
-              >
-                {truncateAddress(status.rootAddress)}
-              </p>
-            )}
-          </div>
-
-          {!linkComplete && (
-            <div className="card border-primary/30 bg-primary/5">
-              <p className="text-sm text-foreground/80 mb-3">
-                {copy.dashboard.finishSetupBanner}
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowOnboarding(true)}
-                className="btn-primary w-full text-sm"
-              >
-                {copy.dashboard.finishSetupCta}
-              </button>
-            </div>
-          )}
-
-          <SetupChecklist
-            linkComplete={linkComplete}
-            onFinishSetup={() => setShowOnboarding(true)}
-          />
-
-          <AgentStatusCard
-            status={
-              linkStatus === "active"
-                ? "active"
-                : linkStatus === "linked_other"
-                  ? "linked_other"
-                  : status.isActive
-                    ? "pending"
-                    : "inactive"
-            }
-          />
-
-          <div className="card">
-            <p className="text-xs text-foreground/60">{copy.dashboard.totalClaims}</p>
-            <p className="font-display font-extrabold text-3xl text-primary">
-              {status.lifetimeClaims ?? 0}
-            </p>
-            {status.lastClaimedAt && (
-              <p className="text-xs text-foreground/60 mt-1">
-                {copy.dashboard.lastClaimed}:{" "}
-                {new Date(status.lastClaimedAt).toLocaleString()}
-              </p>
-            )}
-          </div>
-
-          {simpleSmartAccount && (
-            <details className="card">
-              <summary className="text-xs font-display font-semibold text-foreground/60 cursor-pointer">
-                {copy.dashboard.botLabel}
-              </summary>
-              <p className="text-xs text-foreground/60 mt-2 mb-2">
-                {copy.dashboard.botHint}
-              </p>
-              <CopyAddress address={simpleSmartAccount} />
-            </details>
-          )}
-
+      <main className="flex-1 py-6 space-y-4">
+        <div className="space-y-1">
+          <p className="font-display font-bold text-lg text-white tracking-tight">
+            {linkComplete
+              ? copy.dashboard.headlineActive
+              : copy.dashboard.headlineSetup}
+          </p>
+          <p className="text-sm text-white/80">
+            {linkComplete
+              ? copy.dashboard.subheadActive(claimSchedule)
+              : copy.dashboard.subheadSetup}
+          </p>
           {status.rootAddress && (
-            <CopyAddress
-              address={status.rootAddress}
-              label={copy.dashboard.walletLabel}
-            />
+            <p
+              className="text-xs font-mono text-white/90 pt-0.5"
+              title={status.rootAddress}
+            >
+              {truncateAddress(status.rootAddress)}
+            </p>
           )}
+        </div>
 
-          {!linkComplete && simpleSmartAccount && (
-            <ConnectAgentButton
-              smartAccountAddress={simpleSmartAccount as Address}
-              rootAddress={status.rootAddress as Address | undefined}
-              onConnected={fetchStatus}
-              className="btn-primary block text-center w-full"
-              showTechnicalDetails
-            />
+        {!linkComplete && (
+          <div className="card">
+            <p className="text-sm text-foreground/80 mb-3">
+              {copy.dashboard.finishSetupBanner}
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowOnboarding(true)}
+              className="btn-primary text-sm"
+            >
+              {copy.dashboard.finishSetupCta}
+            </button>
+          </div>
+        )}
+
+        <SetupChecklist
+          linkComplete={linkComplete}
+          onFinishSetup={() => setShowOnboarding(true)}
+        />
+
+        <AgentStatusCard
+          status={
+            linkStatus === "active"
+              ? "active"
+              : linkStatus === "linked_other"
+                ? "linked_other"
+                : status.isActive
+                  ? "pending"
+                  : "inactive"
+          }
+        />
+
+        <div className="card">
+          <p className="text-xs text-foreground/60">{copy.dashboard.totalClaims}</p>
+          <p className="font-display font-extrabold text-3xl text-primary">
+            {status.lifetimeClaims ?? 0}
+          </p>
+          {status.lastClaimedAt && (
+            <p className="text-xs text-foreground/60 mt-1">
+              {copy.dashboard.lastClaimed}:{" "}
+              {new Date(status.lastClaimedAt).toLocaleString()}
+            </p>
           )}
+        </div>
 
-          <ClaimHistoryTable logs={status.claimLogs ?? []} />
-        </main>
-      </div>
+        {simpleSmartAccount && (
+          <details className="card">
+            <summary className="text-xs font-display font-semibold text-foreground/60 cursor-pointer">
+              {copy.dashboard.botLabel}
+            </summary>
+            <p className="text-xs text-foreground/60 mt-2 mb-2">
+              {copy.dashboard.botHint}
+            </p>
+            <CopyAddress address={simpleSmartAccount} />
+          </details>
+        )}
+
+        {status.rootAddress && (
+          <CopyAddress
+            address={status.rootAddress}
+            label={copy.dashboard.walletLabel}
+          />
+        )}
+
+        {!linkComplete && simpleSmartAccount && (
+          <ConnectAgentButton
+            smartAccountAddress={simpleSmartAccount as Address}
+            rootAddress={status.rootAddress as Address | undefined}
+            onConnected={fetchStatus}
+            className="btn-primary"
+            showTechnicalDetails
+          />
+        )}
+
+        <ClaimHistoryTable logs={status.claimLogs ?? []} />
+      </main>
 
       {showOnboarding && simpleSmartAccount && (
         <OnboardingModal
@@ -292,7 +288,7 @@ export default function DashboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="app-shell items-center justify-center">
           <LoadingSpinner label={copy.dashboard.loading} />
         </div>
       }

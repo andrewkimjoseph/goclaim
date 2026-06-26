@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 import { useSiweAuth } from "@/lib/hooks/useSiweAuth";
 import { useSession } from "@/lib/hooks/useSession";
 import { copy } from "@/lib/copy";
@@ -10,21 +11,30 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 type ConnectSignInProps = {
   onSuccess?: () => void;
   label?: string;
+  variant?: "default" | "hero";
 };
+
+function truncateAddress(address: string) {
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
 
 export function ConnectSignIn({
   onSuccess,
   label = copy.auth.connectWallet,
+  variant = "default",
 }: ConnectSignInProps) {
   const router = useRouter();
   const { signIn, isLoading, error, isConnected, address } = useSiweAuth();
   const { authenticated, rootAddress, checked, refresh } = useSession();
+  const { address: walletAddress } = useAccount();
 
   const walletMatchesSession =
     authenticated &&
     address &&
     rootAddress &&
     address.toLowerCase() === rootAddress.toLowerCase();
+
+  const displayAddress = walletAddress ?? address;
 
   async function goToDashboard() {
     if (onSuccess) {
@@ -34,18 +44,23 @@ export function ConnectSignIn({
     }
   }
 
+  const isHero = variant === "hero";
+  const primaryBtn = isHero ? "btn-hero-primary" : "btn-primary";
+  const secondaryBtn = isHero ? "btn-hero-secondary" : "btn-secondary";
+  const ghostBtn = isHero ? "btn-hero-secondary" : "btn-ghost";
+
   if (!checked) {
     return <LoadingSpinner label={copy.auth.checkingSession} />;
   }
 
   if (authenticated) {
     return (
-      <div className="flex flex-col items-center gap-4">
-        <button onClick={goToDashboard} className="btn-primary">
+      <div className="flex flex-col gap-3 w-full">
+        <button onClick={goToDashboard} className={primaryBtn}>
           {copy.auth.goToDashboard}
         </button>
         {isConnected && !walletMatchesSession && address && (
-          <p className="text-foreground/60 text-xs text-center max-w-sm">
+          <p className={`text-xs text-center ${isHero ? "text-red-200" : "text-red-600"}`}>
             {copy.auth.walletMismatch}
           </p>
         )}
@@ -55,13 +70,13 @@ export function ConnectSignIn({
             const connected = ready && account && chain;
             if (!connected) {
               return (
-                <button onClick={openConnectModal} className="btn-secondary text-sm">
+                <button onClick={openConnectModal} className={`${secondaryBtn} text-sm`}>
                   {copy.auth.connectToFinishSetup}
                 </button>
               );
             }
             return (
-              <button onClick={openAccountModal} className="btn-secondary text-sm">
+              <button onClick={openAccountModal} className={`${ghostBtn} text-sm`}>
                 {account.displayName}
               </button>
             );
@@ -72,7 +87,7 @@ export function ConnectSignIn({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col gap-3 w-full">
       <ConnectButton.Custom>
         {({
           account,
@@ -87,6 +102,7 @@ export function ConnectSignIn({
 
           return (
             <div
+              className="w-full"
               {...(!ready && {
                 "aria-hidden": true,
                 style: {
@@ -97,18 +113,44 @@ export function ConnectSignIn({
               })}
             >
               {!connected ? (
-                <button onClick={openConnectModal} className="btn-primary">
-                  {label}
-                </button>
+                <>
+                  {isHero && (
+                    <div className="card-paper mb-3">
+                      <p className="text-xs font-display font-semibold uppercase tracking-wider text-black/50">
+                        {copy.auth.walletCardLabel}
+                      </p>
+                      <p className="font-display font-bold text-lg mt-1 text-black">
+                        {copy.auth.walletCardHint}
+                      </p>
+                    </div>
+                  )}
+                  <button onClick={openConnectModal} className={primaryBtn}>
+                    {label}
+                  </button>
+                </>
               ) : chain.unsupported ? (
-                <button onClick={openChainModal} className="btn-secondary">
+                <button onClick={openChainModal} className={secondaryBtn}>
                   {copy.auth.wrongNetwork}
                 </button>
               ) : (
-                <div className="flex flex-col items-center gap-3">
-                  <button onClick={openAccountModal} className="btn-secondary text-sm">
-                    {account.displayName}
-                  </button>
+                <div className="flex flex-col gap-3 w-full">
+                  {isHero && (
+                    <div className="card-paper">
+                      <p className="text-xs font-display font-semibold uppercase tracking-wider text-black/50">
+                        {copy.auth.walletCardLabel}
+                      </p>
+                      <p className="font-display font-bold text-lg mt-1 text-black">
+                        {displayAddress
+                          ? truncateAddress(displayAddress)
+                          : account.displayName}
+                      </p>
+                    </div>
+                  )}
+                  {!isHero && (
+                    <button onClick={openAccountModal} className="btn-secondary text-sm">
+                      {account.displayName}
+                    </button>
+                  )}
                   <button
                     disabled={isLoading}
                     onClick={async () => {
@@ -118,10 +160,15 @@ export function ConnectSignIn({
                         if (onSuccess) onSuccess();
                       }
                     }}
-                    className="btn-primary disabled:opacity-50"
+                    className={`${primaryBtn} disabled:opacity-50`}
                   >
                     {isLoading ? copy.auth.signingIn : copy.auth.signIn}
                   </button>
+                  {isHero && (
+                    <button onClick={openAccountModal} className={`${secondaryBtn} text-sm`}>
+                      {copy.auth.changeWallet}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -129,15 +176,17 @@ export function ConnectSignIn({
         }}
       </ConnectButton.Custom>
       {error && (
-        <p className="text-red-300 text-sm text-center max-w-sm">{error}</p>
+        <p className={`text-sm text-center ${isHero ? "text-red-200" : "text-red-600"}`}>
+          {error}
+        </p>
       )}
-      {isConnected && !error && (
-        <p className="text-foreground/70 text-sm text-center max-w-sm">
+      {isConnected && !error && !isHero && (
+        <p className="text-foreground/70 text-sm text-center">
           {copy.auth.signInHint}
         </p>
       )}
-      {!isConnected && !error && (
-        <p className="text-foreground/60 text-xs text-center max-w-sm">
+      {!isConnected && !error && !isHero && (
+        <p className="text-foreground/60 text-xs text-center">
           {copy.auth.sessionHint}
         </p>
       )}

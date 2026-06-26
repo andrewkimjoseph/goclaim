@@ -4,52 +4,80 @@
 
 @layer base {
   body {
-    @apply font-sans text-base antialiased bg-background text-foreground;
+    @apply font-sans text-base antialiased bg-shell text-white;
   }
 }
 
 @layer components {
+  .app-shell {
+    @apply max-w-[460px] mx-auto w-full min-h-screen flex flex-col px-4 bg-shell;
+  }
+
+  .header-bar {
+    @apply py-4 flex items-center justify-between border-b-2 border-black;
+  }
+
   .btn-primary {
-    @apply bg-primary text-background font-display font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors;
+    @apply w-full bg-primary text-white font-display font-bold px-6 py-4 border-2 border-black shadow-brutal rounded-brutal hover:brightness-105 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-brutal transition-transform;
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-foreground/40 text-foreground font-display font-semibold px-6 py-3 rounded-lg hover:bg-foreground/10 transition-colors;
+    @apply w-full bg-white text-black font-display font-semibold px-6 py-4 border-2 border-black shadow-brutal rounded-brutal hover:bg-black/5 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 transition-transform;
+  }
+
+  .btn-ghost {
+    @apply w-full bg-transparent text-black font-display font-semibold px-6 py-3 border-2 border-black rounded-brutal hover:bg-black/5 transition-colors;
+  }
+
+  .btn-hero-primary {
+    @apply w-full bg-white text-black font-display font-bold px-6 py-4 border-2 border-black shadow-brutal rounded-brutal hover:bg-white/95 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-brutal transition-transform;
+  }
+
+  .btn-hero-secondary {
+    @apply w-full bg-transparent text-white font-display font-semibold px-6 py-3 border-2 border-white rounded-brutal hover:bg-white/10 active:translate-x-[2px] active:translate-y-[2px] transition-transform;
   }
 
   .card {
-    @apply bg-surface text-foreground border border-foreground/15 rounded-lg shadow-sm p-4;
+    @apply bg-white text-foreground border-2 border-black shadow-brutal p-4 rounded-brutal;
+  }
+
+  .card-paper {
+    @apply bg-white text-black border-2 border-black shadow-brutal p-4 rounded-brutal w-full text-left;
   }
 
   .status-pill {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-display font-semibold border;
+    @apply inline-flex items-center px-2 py-0.5 rounded-brutal text-xs font-display font-semibold border-2 border-black;
   }
 
   .status-active {
-    @apply status-pill bg-primary/20 text-primary border-primary/40;
+    @apply status-pill bg-primary text-white;
   }
 
   .status-pending {
-    @apply status-pill bg-foreground/10 text-foreground border-foreground/25;
+    @apply status-pill bg-white text-black;
   }
 
   .status-failed {
-    @apply status-pill bg-red-500/20 text-red-300 border-red-400/40;
+    @apply status-pill bg-red-500 text-white border-black;
   }
 
   .section-label {
-    @apply uppercase tracking-widest text-xs font-display font-semibold text-foreground border border-foreground/30 rounded-full px-3 py-1;
+    @apply uppercase tracking-widest text-xs font-display font-semibold text-foreground border-2 border-black rounded-brutal px-3 py-1;
+  }
+
+  .section-label-inverse {
+    @apply uppercase tracking-widest text-xs font-display font-semibold text-white border-2 border-accent rounded-brutal px-3 py-1;
   }
 
   .step-badge {
-    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display font-bold text-sm;
+    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-brutal font-display font-bold text-sm border-2 border-black;
   }
 
   .step-badge-done {
-    @apply step-badge bg-primary text-background;
+    @apply step-badge bg-primary text-white;
   }
 
   .step-badge-todo {
-    @apply step-badge border-2 border-foreground/25 text-foreground/50 bg-surface/80;
+    @apply step-badge bg-white text-black/50;
   }
 }

@@ -143,10 +143,10 @@ export function ConnectAgentButton({
           : label}
       </button>
       {localError && (
-        <p className="text-red-400 text-sm text-center">{localError}</p>
+        <p className="text-red-600 text-sm text-center">{localError}</p>
       )}
       {wrongWallet && !localError && (
-        <p className="text-red-400 text-sm text-center">{copy.connect.wrongWallet}</p>
+        <p className="text-red-600 text-sm text-center">{copy.connect.wrongWallet}</p>
       )}
     </div>
   );

@@ -47,7 +47,7 @@ export function ClaimHistoryTable({ logs }: ClaimHistoryTableProps) {
       </h3>
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-foreground/60 border-b border-foreground/20">
+          <tr className="text-left text-foreground/60 border-b-2 border-black">
             <th className="pb-2 pr-4">{copy.claimHistory.date}</th>
             <th className="pb-2 pr-4">{copy.claimHistory.status}</th>
             <th className="pb-2 pr-4">{copy.claimHistory.amount}</th>
@@ -60,7 +60,7 @@ export function ClaimHistoryTable({ logs }: ClaimHistoryTableProps) {
             return (
               <tr
                 key={log.id}
-                className="border-b border-foreground/10 last:border-0"
+                className="border-b border-black/10 last:border-0"
               >
                 <td className="py-2 pr-4 whitespace-nowrap">
                   {new Date(log.claimedAt).toLocaleDateString(undefined, {

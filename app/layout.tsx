@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+import { Providers } from "@/app/providers";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -18,13 +18,17 @@ const sans = Hanken_Grotesk({
 export const metadata: Metadata = {
   title: "GoClaim | Your UBI, on autopilot.",
   description:
-    "GoClaim claims GoodDollar for you every day and sends G$ straight to your wallet.",
+    "GoClaim claims GoodDollar for you every day and sends it straight to your wallet.",
+  icons: {
+    icon: "/brand/logo-watermelon.png",
+    apple: "/brand/logo-watermelon.png",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#141820",
+  themeColor: "#085020",
 };
 
 export default function RootLayout({

@@ -39,8 +39,8 @@ export function OnboardingModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-background/80 p-4">
-      <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4">
+      <div className="card w-full max-w-[460px] max-h-[90vh] overflow-y-auto">
         <h2 className="font-display font-extrabold text-xl mb-4 text-foreground">
           {copy.onboarding.title}
         </h2>
@@ -59,7 +59,7 @@ export function OnboardingModal({
                 <summary className="text-xs font-display font-semibold text-primary cursor-pointer">
                   {copy.onboarding.step1.showAddress}
                 </summary>
-                <code className="text-xs break-all block mt-2 bg-foreground/5 p-2 rounded text-foreground">
+                <code className="text-xs break-all block mt-2 border-2 border-black p-2 rounded-brutal text-foreground bg-white">
                   {smartAccountAddress}
                 </code>
                 {isCounterfactual && (
@@ -93,7 +93,7 @@ export function OnboardingModal({
                     smartAccountAddress={smartAccountAddress as Address}
                     rootAddress={rootAddress as Address | undefined}
                     onConnected={handleConnected}
-                    className="btn-primary text-sm w-full"
+                    className="btn-primary text-sm"
                     label={copy.onboarding.step2.cta}
                   />
                 </div>
@@ -123,7 +123,7 @@ export function OnboardingModal({
           </li>
         </ol>
 
-        <button onClick={onClose} className="btn-primary w-full mt-6">
+        <button onClick={onClose} className="btn-primary mt-6">
           {copy.onboarding.goToDashboard}
         </button>
       </div>
