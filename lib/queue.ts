@@ -1,19 +1,45 @@
 import { Queue, type ConnectionOptions } from "bullmq";
 
-function parseUpstashRedisUrl(raw: string): ConnectionOptions {
-  const trimmed = raw.trim();
+/** Strip wrapping quotes Railway/console sometimes add to env vars. */
+function cleanEnvUrl(raw: string): string {
+  return raw.trim().replace(/^["']|["']$/g, "");
+}
 
-  if (trimmed.startsWith("https://") || trimmed.includes("upstash.io")) {
-    if (!trimmed.startsWith("rediss://") && !trimmed.startsWith("redis://")) {
-      throw new Error(
-        "UPSTASH_REDIS_URL must be the Redis TCP URL (rediss://default:...@....upstash.io:6379), not the REST API URL."
-      );
-    }
+/**
+ * Upstash is TLS-only. Console sometimes shows redis:// — upgrade for *.upstash.io.
+ */
+function normalizeUpstashUrl(raw: string): string {
+  const trimmed = cleanEnvUrl(raw);
+  if (
+    trimmed.startsWith("redis://") &&
+    trimmed.includes("upstash.io")
+  ) {
+    console.warn(
+      "[redis] UPSTASH_REDIS_URL uses redis:// — upgrading to rediss:// (Upstash requires TLS)"
+    );
+    return trimmed.replace(/^redis:\/\//, "rediss://");
+  }
+  return trimmed;
+}
+
+function parseUpstashRedisUrl(raw: string): ConnectionOptions {
+  const trimmed = normalizeUpstashUrl(raw);
+
+  if (trimmed.startsWith("https://")) {
+    throw new Error(
+      "UPSTASH_REDIS_URL must be the Redis TCP URL (rediss://default:...@....upstash.io:6379), not the REST API URL."
+    );
   }
 
   if (!trimmed.startsWith("rediss://") && !trimmed.startsWith("redis://")) {
     throw new Error(
       "UPSTASH_REDIS_URL must start with rediss:// (Upstash requires TLS)."
+    );
+  }
+
+  if (trimmed.startsWith("redis://") && !trimmed.includes("upstash.io")) {
+    throw new Error(
+      "UPSTASH_REDIS_URL uses redis:// without TLS. For Upstash, use rediss:// from the Connect tab."
     );
   }
 
@@ -48,7 +74,7 @@ function parseUpstashRedisUrl(raw: string): ConnectionOptions {
         msg.includes("READONLY")
       );
     },
-    ...(useTls ? { tls: { servername: host } } : {}),
+    ...(useTls ? { tls: {} } : {}),
   };
 }
 
@@ -120,7 +146,7 @@ export function getRedisHostForLog(): string {
   const url = process.env.UPSTASH_REDIS_URL;
   if (!url) return "(missing)";
   try {
-    const parsed = new URL(url.trim());
+    const parsed = new URL(normalizeUpstashUrl(url));
     return `${parsed.protocol}//${parsed.hostname}:${parsed.port || 6379}`;
   } catch {
     return "(invalid URL)";
