@@ -8,6 +8,18 @@ import { processClaim } from "./jobs/processClaim";
 
 const connection = getRedisConnection();
 
+const concurrency = Number(process.env.WORKER_CONCURRENCY ?? "5");
+const drainDelay = Number(process.env.WORKER_DRAIN_DELAY_SEC ?? "30");
+
+if (
+  process.env.NODE_ENV === "development" &&
+  getRedisHostForLog().includes("upstash.io")
+) {
+  console.warn(
+    "[worker] Running in development against Upstash — this adds idle Redis polling. Prefer `npm run claim-test` unless testing the queue."
+  );
+}
+
 const worker = new Worker(
   CLAIM_QUEUE_NAME,
   async (job) => {
@@ -15,7 +27,8 @@ const worker = new Worker(
   },
   {
     connection,
-    concurrency: 50,
+    concurrency,
+    drainDelay,
   }
 );
 
@@ -39,7 +52,7 @@ worker.on("failed", (job, err) => {
 });
 
 console.log(
-  `[worker] GoClaim claim worker starting (redis: ${getRedisHostForLog()})`
+  `[worker] GoClaim claim worker starting (redis: ${getRedisHostForLog()}, concurrency: ${concurrency}, drainDelay: ${drainDelay}s)`
 );
 
 process.on("SIGTERM", async () => {

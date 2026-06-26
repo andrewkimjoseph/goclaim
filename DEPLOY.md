@@ -10,6 +10,10 @@
 1. Create a Redis database on Upstash
 2. Copy `UPSTASH_REDIS_URL` — the **Redis TCP** URL (`rediss://default:...@....upstash.io:6379`), not the REST URL
 
+**Command usage:** Redis is used only by BullMQ (claim queue). The dashboard and auth APIs do not touch Redis. An always-on worker polls Redis even when the queue is empty — tune `WORKER_DRAIN_DELAY_SEC` on Railway to limit idle commands.
+
+**Local dev:** Do not run `npm run worker` unless you are testing the queue — it shares Upstash and doubles idle polling. For single claims, use `USER_ID=<cuid> npm run claim-test` instead. If you need a local worker, set `WORKER_DRAIN_DELAY_SEC=60` in `.env.local`.
+
 ## 3. Generate secrets
 
 ```bash
@@ -41,8 +45,19 @@ Env vars:
 - `ENCRYPTION_MASTER_KEY`
 - `PIMLICO_API_KEY`
 - `DRPC_API_KEY` (optional)
+- `WORKER_CONCURRENCY` (optional, default `5`)
+- `WORKER_DRAIN_DELAY_SEC` (optional, default `30` — seconds between idle queue polls)
 
 Start command: `npm run worker` (via `railway.toml`).
+
+Recommended Railway values for low Upstash command volume:
+
+```
+WORKER_CONCURRENCY=5
+WORKER_DRAIN_DELAY_SEC=30
+```
+
+Redeploy the worker after changing these. Monitor Upstash → Usage over 24–48h.
 
 ## 6. Railway Cron
 

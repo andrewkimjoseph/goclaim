@@ -97,8 +97,8 @@ export function getClaimQueue(): Queue {
       defaultJobOptions: {
         attempts: 2,
         backoff: { type: "fixed", delay: 600_000 },
-        removeOnComplete: 1000,
-        removeOnFail: 5000,
+        removeOnComplete: { count: 100, age: 86_400 },
+        removeOnFail: { count: 200, age: 604_800 },
       },
     });
   }
