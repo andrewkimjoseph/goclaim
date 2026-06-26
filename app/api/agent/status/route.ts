@@ -5,6 +5,15 @@ import { prisma } from "@/lib/prisma";
 import { getLinkStatus } from "@/lib/onchain/eligibility";
 import { resolveAgentAddresses } from "@/lib/onchain/resolveAgentAddresses";
 import { publicClient } from "@/lib/onchain/config";
+import { formatEntitlementGd } from "@/lib/onchain/claimUbi";
+
+type TransferLogRow = {
+  recipientAddress: string;
+  amountWei: string;
+  txHash: string;
+  userOpHash: string;
+  transferredAt: Date;
+};
 
 type ClaimLogRow = {
   id: string;
@@ -13,6 +22,7 @@ type ClaimLogRow = {
   errorMsg: string | null;
   claimedAt: Date;
   waveIndex: number | null;
+  transfer: TransferLogRow | null;
 };
 
 export async function GET() {
@@ -28,6 +38,7 @@ export async function GET() {
       claimLogs: {
         orderBy: { claimedAt: "desc" },
         take: 20,
+        include: { transfer: true },
       },
     },
   });
@@ -90,6 +101,16 @@ export async function GET() {
       errorMsg: log.errorMsg,
       claimedAt: log.claimedAt.toISOString(),
       waveIndex: log.waveIndex,
+      transfer: log.transfer
+        ? {
+            recipientAddress: log.transfer.recipientAddress,
+            amountWei: log.transfer.amountWei,
+            amountGd: formatEntitlementGd(log.transfer.amountWei),
+            txHash: log.transfer.txHash,
+            userOpHash: log.transfer.userOpHash,
+            transferredAt: log.transfer.transferredAt.toISOString(),
+          }
+        : null,
     })),
   });
 }
