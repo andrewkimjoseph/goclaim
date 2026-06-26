@@ -48,10 +48,10 @@ function WalletStatusCard({
   const addressClass = isHero ? "text-black" : "text-foreground";
 
   return (
-    <div className={cardClass}>
-      <div className="flex items-start justify-between gap-2">
+    <div className={`${cardClass} min-w-0 overflow-hidden`}>
+      <div className="flex items-start justify-between gap-2 min-w-0">
         <p
-          className={`text-xs font-display font-semibold uppercase tracking-wider ${
+          className={`min-w-0 flex-1 text-xs font-display font-semibold uppercase tracking-wider ${
             isHero ? "text-black/50" : "text-foreground/60"
           }`}
         >
@@ -67,7 +67,10 @@ function WalletStatusCard({
         </p>
       )}
 
-      <p className={`font-display font-bold text-lg mt-1 ${addressClass}`}>
+      <p
+        className={`font-display font-bold text-lg mt-1 truncate min-w-0 ${addressClass}`}
+        title={displayAddress}
+      >
         {displayAddress ? truncateAddress(displayAddress) : accountName}
       </p>
 
