@@ -2,7 +2,7 @@ import { copy } from "@/lib/copy";
 
 export function VerifiedBadge() {
   return (
-    <span className="inline-flex items-center gap-1 status-pill bg-accent text-white shrink-0">
+    <span className="inline-flex items-center gap-1 status-active shrink-0">
       <svg
         aria-hidden
         viewBox="0 0 16 16"
