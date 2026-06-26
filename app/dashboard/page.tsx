@@ -13,7 +13,6 @@ import { SetupChecklist } from "@/components/SetupChecklist";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { type Address } from "viem";
 import { copy, formatClaimSchedule } from "@/lib/copy";
-import { truncateAddress } from "@/lib/formatAddress";
 
 type AgentStatus = {
   hasAgent: boolean;
@@ -177,14 +176,6 @@ function DashboardContent() {
               ? copy.dashboard.subheadActive(claimSchedule)
               : copy.dashboard.subheadSetup}
           </p>
-          {status.rootAddress && (
-            <p
-              className="text-xs font-mono text-white/90 pt-0.5"
-              title={status.rootAddress}
-            >
-              {truncateAddress(status.rootAddress)}
-            </p>
-          )}
         </div>
 
         {!linkComplete && (
