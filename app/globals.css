@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-base antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-background font-display font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-foreground/40 text-foreground font-display font-semibold px-6 py-3 rounded-lg hover:bg-foreground/10 transition-colors;
+  }
+
+  .card {
+    @apply bg-surface text-foreground border border-foreground/15 rounded-lg shadow-sm p-4;
+  }
+
+  .status-pill {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-display font-semibold border;
+  }
+
+  .status-active {
+    @apply status-pill bg-primary/20 text-primary border-primary/40;
+  }
+
+  .status-pending {
+    @apply status-pill bg-foreground/10 text-foreground border-foreground/25;
+  }
+
+  .status-failed {
+    @apply status-pill bg-red-500/20 text-red-300 border-red-400/40;
+  }
+
+  .section-label {
+    @apply uppercase tracking-widest text-xs font-display font-semibold text-foreground border border-foreground/30 rounded-full px-3 py-1;
+  }
+
+  .step-badge {
+    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display font-bold text-sm;
+  }
+
+  .step-badge-done {
+    @apply step-badge bg-primary text-background;
+  }
+
+  .step-badge-todo {
+    @apply step-badge border-2 border-foreground/25 text-foreground/50 bg-surface/80;
+  }
+}
