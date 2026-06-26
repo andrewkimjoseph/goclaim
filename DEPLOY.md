@@ -8,7 +8,7 @@
 ## 2. Upstash Redis
 
 1. Create a Redis database on Upstash
-2. Copy `UPSTASH_REDIS_URL` (use the TLS/rediss URL)
+2. Copy `UPSTASH_REDIS_URL` — the **Redis TCP** URL (`rediss://default:...@....upstash.io:6379`), not the REST URL
 
 ## 3. Generate secrets
 

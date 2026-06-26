@@ -1,15 +1,63 @@
 import { Queue, type ConnectionOptions } from "bullmq";
 
-function getConnection(): ConnectionOptions {
+function parseUpstashRedisUrl(raw: string): ConnectionOptions {
+  const trimmed = raw.trim();
+
+  if (trimmed.startsWith("https://") || trimmed.includes("upstash.io")) {
+    if (!trimmed.startsWith("rediss://") && !trimmed.startsWith("redis://")) {
+      throw new Error(
+        "UPSTASH_REDIS_URL must be the Redis TCP URL (rediss://default:...@....upstash.io:6379), not the REST API URL."
+      );
+    }
+  }
+
+  if (!trimmed.startsWith("rediss://") && !trimmed.startsWith("redis://")) {
+    throw new Error(
+      "UPSTASH_REDIS_URL must start with rediss:// (Upstash requires TLS)."
+    );
+  }
+
+  const parsed = new URL(trimmed);
+  const useTls = parsed.protocol === "rediss:";
+  const host = parsed.hostname;
+  const port = parsed.port ? Number(parsed.port) : 6379;
+
+  if (!host || !parsed.password) {
+    throw new Error(
+      "UPSTASH_REDIS_URL is malformed — copy the full rediss:// URL from Upstash → Redis → Connect."
+    );
+  }
+
+  return {
+    host,
+    port,
+    username: parsed.username || "default",
+    password: decodeURIComponent(parsed.password),
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+    connectTimeout: 30_000,
+    retryStrategy: (times) => {
+      if (times > 20) return null;
+      return Math.min(times * 500, 5_000);
+    },
+    reconnectOnError: (err) => {
+      const msg = err.message;
+      return (
+        msg.includes("ECONNRESET") ||
+        msg.includes("ETIMEDOUT") ||
+        msg.includes("READONLY")
+      );
+    },
+    ...(useTls ? { tls: { servername: host } } : {}),
+  };
+}
+
+export function getRedisConnection(): ConnectionOptions {
   const url = process.env.UPSTASH_REDIS_URL;
   if (!url) {
     throw new Error("Missing UPSTASH_REDIS_URL");
   }
-  return {
-    url,
-    maxRetriesPerRequest: null,
-    tls: url.startsWith("rediss://") ? {} : undefined,
-  };
+  return parseUpstashRedisUrl(url);
 }
 
 export const CLAIM_QUEUE_NAME = "claimQueue";
@@ -19,7 +67,7 @@ let claimQueue: Queue | null = null;
 export function getClaimQueue(): Queue {
   if (!claimQueue) {
     claimQueue = new Queue(CLAIM_QUEUE_NAME, {
-      connection: getConnection(),
+      connection: getRedisConnection(),
       defaultJobOptions: {
         attempts: 2,
         backoff: { type: "fixed", delay: 600_000 },
@@ -67,4 +115,14 @@ export async function enqueueClaimWaves(userIds: string[]): Promise<{
   return { enqueued, waves: waves.length };
 }
 
-export { getConnection as getRedisConnection };
+/** Log-safe host for startup diagnostics (no password). */
+export function getRedisHostForLog(): string {
+  const url = process.env.UPSTASH_REDIS_URL;
+  if (!url) return "(missing)";
+  try {
+    const parsed = new URL(url.trim());
+    return `${parsed.protocol}//${parsed.hostname}:${parsed.port || 6379}`;
+  } catch {
+    return "(invalid URL)";
+  }
+}

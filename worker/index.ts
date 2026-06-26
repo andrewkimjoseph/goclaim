@@ -1,6 +1,12 @@
 import { Worker } from "bullmq";
-import { CLAIM_QUEUE_NAME, getRedisConnection } from "@/lib/queue";
+import {
+  CLAIM_QUEUE_NAME,
+  getRedisConnection,
+  getRedisHostForLog,
+} from "@/lib/queue";
 import { processClaim } from "./jobs/processClaim";
+
+const connection = getRedisConnection();
 
 const worker = new Worker(
   CLAIM_QUEUE_NAME,
@@ -8,10 +14,18 @@ const worker = new Worker(
     await processClaim(job.data);
   },
   {
-    connection: getRedisConnection(),
+    connection,
     concurrency: 50,
   }
 );
+
+worker.on("ready", () => {
+  console.log(`[worker] Redis connected (${getRedisHostForLog()})`);
+});
+
+worker.on("error", (err) => {
+  console.error("[worker] Redis error:", err.message);
+});
 
 worker.on("completed", (job) => {
   console.log(`[worker] completed job ${job.id} for user ${job.data.userId}`);
@@ -24,9 +38,15 @@ worker.on("failed", (job, err) => {
   );
 });
 
-console.log("[worker] GoClaim claim worker started");
+console.log(
+  `[worker] GoClaim claim worker starting (redis: ${getRedisHostForLog()})`
+);
 
 process.on("SIGTERM", async () => {
   await worker.close();
   process.exit(0);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("[worker] unhandled rejection:", reason);
 });
