@@ -7,7 +7,7 @@ const SKIP_REASONS: Record<string, string> = {
   already_claimed: "Already claimed today",
   not_whitelisted: "Not verified on GoodDollar",
   no_entitlement: "No claim available yet",
-  "No active agent wallet": "Bot not active",
+  "No active agent wallet": "Smart account not active",
 };
 
 export function formatClaimStatus(

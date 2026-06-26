@@ -235,10 +235,10 @@ function DashboardContent() {
         {simpleSmartAccount && (
           <details className="card">
             <summary className="text-xs font-display font-semibold text-foreground/60 cursor-pointer">
-              {copy.dashboard.botLabel}
+              {copy.dashboard.smartAccountLabel}
             </summary>
             <p className="text-xs text-foreground/60 mt-2 mb-2">
-              {copy.dashboard.botHint}
+              {copy.dashboard.smartAccountHint}
             </p>
             <CopyAddress address={simpleSmartAccount} nested />
           </details>

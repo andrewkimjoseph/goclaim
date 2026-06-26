@@ -3,7 +3,7 @@ export const copy = {
     tagline: "Autopilot UBI",
     headline: "Your UBI, on autopilot.",
     subhead:
-      "GoClaim creates a bot that claims GoodDollar for you every day and sends G$ straight to your wallet.",
+      "GoClaim creates a smart account that claims GoodDollar for you every day and sends G$ straight to your wallet.",
     footer: "GoClaim — built on Celo + GoodDollar",
     howItWorks: "How it works",
     steps: [
@@ -15,7 +15,7 @@ export const copy = {
       {
         title: "Link",
         description:
-          "One quick approval links your GoClaim bot to GoodDollar.",
+          "One quick approval links your GoClaim smart account to GoodDollar.",
       },
       {
         title: "Earn",
@@ -47,22 +47,22 @@ export const copy = {
     preparingVerification: "Preparing…",
     redirectingVerification: "Redirecting…",
     linkedWalletHint:
-      "This wallet is linked to another identity. Connect your verified wallet to continue.",
+      "Linked to another identity. Switch to your verified wallet.",
   },
   onboarding: {
     title: "Set up GoClaim",
     step1: {
-      title: "Bot created",
-      body: "Your GoClaim bot is ready. It will claim G$ and send it to your wallet.",
-      showAddress: "Show bot address",
+      title: "Smart account created",
+      body: "Your GoClaim smart account is ready. It will claim G$ and send it to your wallet.",
+      showAddress: "Show smart account address",
       celoscanTitle: "Why does the address look empty on Celoscan?",
       celoscanBody:
-        "Your bot activates on its first claim. Until then, block explorers may show a normal wallet address — that is expected.",
+        "Your smart account activates on its first claim. Until then, block explorers may show a normal wallet address — that is expected.",
     },
     step2: {
       title: "Link to GoodDollar",
-      body: "Approve one transaction from your wallet. This tells GoodDollar your bot can claim for you.",
-      cta: "Link bot to GoodDollar",
+      body: "Approve one transaction from your wallet. This tells GoodDollar your smart account can claim for you.",
+      cta: "Link smart account to GoodDollar",
     },
     step3: {
       title: "All set",
@@ -74,10 +74,10 @@ export const copy = {
     goToDashboard: "Go to Dashboard",
   },
   connect: {
-    cta: "Link bot to GoodDollar",
+    cta: "Link smart account to GoodDollar",
     confirming: "Confirming...",
     confirmInWallet: "Confirm in wallet...",
-    linked: "Bot linked — you're all set",
+    linked: "Smart account linked — you're all set",
     connectWalletFirst: "Connect your GoodDollar wallet first.",
     switchWallet: "Switch to the wallet you signed in with.",
     wrongWallet: "Connected wallet does not match your signed-in wallet.",
@@ -89,17 +89,17 @@ export const copy = {
     headlineSetup: "Welcome back",
     subheadActive: (claimSchedule: string) =>
       `G$ is claimed ${claimSchedule} and sent to your wallet.`,
-    subheadSetup: "Link your bot to GoodDollar to start claiming.",
+    subheadSetup: "Link your smart account to GoodDollar to start claiming.",
     loading: "Loading...",
     setupGoClaim: "Set up GoClaim",
-    noAgent: "Your GoClaim bot is not set up yet.",
+    noAgent: "Your GoClaim smart account is not set up yet.",
     totalClaims: "Total claims",
     lastClaimed: "Last claimed",
-    botLabel: "GoClaim bot",
-    botHint:
-      "This bot claims for you automatically.",
+    smartAccountLabel: "GoClaim smart account",
+    smartAccountHint:
+      "This smart account claims for you automatically.",
     walletLabel: "Your wallet (receives G$)",
-    finishSetupBanner: "One step left: link your bot to GoodDollar",
+    finishSetupBanner: "One step left: link your smart account to GoodDollar",
     finishSetupCta: "Finish setup",
     backToHome: "Back to home",
     signOut: "Sign out",
@@ -107,7 +107,7 @@ export const copy = {
   setupChecklist: {
     title: "Finish setup",
     signedIn: "Signed in",
-    linkBot: "Link bot to GoodDollar",
+    linkSmartAccount: "Link smart account to GoodDollar",
     claimsStart: "Daily claims start",
   },
   agentStatus: {
@@ -118,12 +118,12 @@ export const copy = {
     },
     pending: {
       label: "Setup incomplete",
-      description: "Link your bot to GoodDollar to start.",
+      description: "Link your smart account to GoodDollar to start.",
     },
     linked_other: {
       label: "Wrong wallet linked",
       description:
-        "This bot is linked to a different wallet. Contact support or re-setup.",
+        "This smart account is linked to a different wallet. Contact support or re-setup.",
     },
     inactive: {
       label: "Paused",
@@ -133,7 +133,7 @@ export const copy = {
   claimHistory: {
     title: "Claim history",
     empty: (claimSchedule: string) =>
-      `No claims yet. After you link your bot, the first claim runs ${claimSchedule}.`,
+      `No claims yet. After you link your smart account, the first claim runs ${claimSchedule}.`,
     date: "Date",
     status: "Status",
     amount: "Amount sent",
@@ -143,6 +143,55 @@ export const copy = {
   time: {
     claimScheduleUtc: "every day at 12:00 PM UTC",
     claimScheduleShort: "12:00 PM UTC daily",
+  },
+  faqs: {
+    title: "FAQs",
+    subtitle: "Quick answers about how GoClaim works.",
+    backToHome: "HOME",
+    homeLink: "Questions? Read the FAQs",
+    headerButton: "FAQs",
+    items: [
+      {
+        question: "What is GoClaim?",
+        answer:
+          "GoClaim claims your daily GoodDollar UBI for you and sends G$ to your wallet automatically.",
+      },
+      {
+        question: "Who can use it?",
+        answer:
+          "Anyone with a GoodDollar-verified root wallet on Celo. Linked wallets won't work — connect the wallet that receives your UBI.",
+      },
+      {
+        question: "How does setup work?",
+        answer:
+          "Connect your wallet, sign in, then link your GoClaim smart account to GoodDollar once. After that, claims run on their own.",
+      },
+      {
+        question: "When are claims made?",
+        answer:
+          "Every day at 12:00 PM UTC. G$ is sent to your wallet right after each claim.",
+      },
+      {
+        question: "Where does my G$ go?",
+        answer:
+          "Straight to the root wallet you connected — the same wallet where you receive GoodDollar.",
+      },
+      {
+        question: "What is the smart account?",
+        answer:
+          "A GoClaim-managed account on Celo that claims UBI on your behalf. You approve it once in GoodDollar, then it runs in the background.",
+      },
+      {
+        question: "Do I need to come back every day?",
+        answer:
+          "No. After setup, GoClaim handles daily claims automatically. Check your dashboard anytime to see claim history.",
+      },
+      {
+        question: "Is sign-in free?",
+        answer:
+          "Yes. Sign-in uses a free wallet message — no gas fee. You only pay gas for the one-time GoodDollar link step.",
+      },
+    ],
   },
 } as const;
 

@@ -29,7 +29,7 @@ export function SetupChecklist({
           <span className="step-badge-todo shrink-0">2</span>
           <div className="flex-1">
             <span className="text-sm text-foreground/80 block">
-              {copy.setupChecklist.linkBot}
+              {copy.setupChecklist.linkSmartAccount}
             </span>
             {onFinishSetup && (
               <button
