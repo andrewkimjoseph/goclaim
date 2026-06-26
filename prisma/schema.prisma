@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(cuid())
+  rootAddress String       @unique
+  createdAt   DateTime     @default(now())
+  agentWallet AgentWallet?
+  claimLogs   ClaimLog[]
+}
+
+model AgentWallet {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id])
+  smartAccountAddress String    @unique
+  eoaAddress          String
+  encryptedPrivateKey String
+  iv                  String
+  keyVersion          String    @default("v1")
+  createdAt           DateTime  @default(now())
+  lastClaimedAt       DateTime?
+  isActive            Boolean   @default(true)
+}
+
+model ClaimLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  status    String
+  txHash    String?
+  errorMsg  String?
+  claimedAt DateTime @default(now())
+  waveIndex Int?
+}
+
+model Nonce {
+  id        String   @id @default(cuid())
+  address   String
+  nonce     String
+  expiresAt DateTime
+
+  @@index([address, expiresAt])
+}
