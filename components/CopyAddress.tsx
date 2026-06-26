@@ -22,7 +22,7 @@ export function CopyAddress({ address, label, hint, nested }: CopyAddressProps) 
   const row = (
     <div className="flex items-center gap-3 min-w-0">
       <code
-        className="flex-1 min-w-0 text-xs font-mono text-foreground/90 leading-none whitespace-nowrap overflow-hidden"
+        className="flex-1 min-w-0 text-xs font-mono font-bold text-foreground leading-none whitespace-nowrap overflow-hidden"
         title={address}
       >
         {address}
