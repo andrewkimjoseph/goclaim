@@ -1,5 +1,7 @@
 # GoClaim Deployment Checklist
 
+> **Node 20.9+ required.** Next.js 16 needs Node `>=20.9.0`. This is pinned via `engines` in `package.json` and `.nvmrc` (`20`). On Railway, also set `NIXPACKS_NODE_VERSION=20` on each service so the build image does not fall back to Node 18.
+
 ## 1. Neon Postgres
 
 1. Create a Neon project and copy `DATABASE_URL`
@@ -61,9 +63,46 @@ Redeploy the worker after changing these. Monitor Upstash → Usage over 24–48
 
 ## 6. Railway Cron
 
-Schedule: `0 12 * * *` (UTC)
+The cron is a **separate Railway service** from the worker. It fires one HTTP POST to the
+Vercel `trigger-claims` endpoint, which enqueues claim jobs the always-on worker then
+processes. Flow: Railway Cron -> Vercel `/api/internal/trigger-claims` -> Upstash Redis ->
+Railway Worker -> Celo.
 
-Command:
+### Create the cron service
+
+1. Railway -> New service -> deploy from the **same GitHub repo** (do not reuse the worker service).
+2. Service Settings:
+   - **Cron Schedule:** `0 12 * * *` (UTC)
+   - **Restart Policy:** `Never` — a cron service must run once and exit. `On Failure`/always-on
+     makes Railway treat it as a long-running service and it will never be scheduled.
+   - **Build Command (optional):** `echo skip` — the cron only sends an HTTP request, so it does
+     not need `next build` or `prisma generate`.
+   - **Start Command:** Nixpacks images include `curl`. `-s` silences progress; `-f` makes curl
+     exit non-zero on an HTTP 4xx/5xx so a failed trigger shows as a failed cron run:
+
+```bash
+sh -c 'curl -sf -X POST "$NEXT_PUBLIC_APP_URL/api/internal/trigger-claims" -H "Authorization: Bearer $CRON_SECRET"'
+```
+
+   - **No-curl fallback** (uses Node 20's global `fetch`):
+
+```bash
+node -e "fetch(process.env.NEXT_PUBLIC_APP_URL+'/api/internal/trigger-claims',{method:'POST',headers:{Authorization:'Bearer '+process.env.CRON_SECRET}}).then(async r=>{console.log(r.status, await r.text()); process.exit(r.ok?0:1)}).catch(e=>{console.error(e); process.exit(1)})"
+```
+
+3. Env vars on the cron service:
+   - `NEXT_PUBLIC_APP_URL` (e.g. `https://app.goclaim.xyz`)
+   - `CRON_SECRET` (must match the value set on Vercel)
+   - `NIXPACKS_NODE_VERSION=20`
+
+### If the cron "didn't run", check
+
+- **Build image failed on Node 18** — Next 16 needs Node 20.9+ (see top of this file).
+- **No cron service existed** — `railway.toml` only defines the worker; the cron is a second service.
+- **Restart Policy not `Never`** — Railway won't schedule a service it considers always-on.
+- **`NEXT_PUBLIC_APP_URL` / `CRON_SECRET` missing or mismatched** with Vercel.
+
+### Equivalent manual command
 
 ```bash
 curl -s -X POST "$NEXT_PUBLIC_APP_URL/api/internal/trigger-claims" \
