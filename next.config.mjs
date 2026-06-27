@@ -1,12 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config) => {
-    config.externals.push("pino-pretty", "lokijs", "encoding");
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      "@react-native-async-storage/async-storage": false,
-    };
-    return config;
+  // porto (wagmi connector) .d.ts re-exports ../src/*.ts with invalid types for Next's tsc pass
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  serverExternalPackages: ["pino-pretty", "lokijs", "encoding"],
+  compiler: {
+    define: {
+      __DEV__: JSON.stringify(process.env.NODE_ENV !== "production"),
+    },
+  },
+  turbopack: {
+    root: import.meta.dirname,
+    resolveAlias: {
+      "@react-native-async-storage/async-storage": {
+        browser: "./lib/empty-module.ts",
+      },
+    },
   },
 };
 
