@@ -5,4 +5,4 @@ buildCommand = "echo skip-cron-build"
 [deploy]
 startCommand = 'curl -sf -X POST "$NEXT_PUBLIC_APP_URL/api/internal/trigger-claims" -H "Authorization: Bearer $CRON_SECRET"'
 restartPolicyType = "NEVER"
-cronSchedule = "21 15 * * *"
+cronSchedule = "32 15 * * *"
