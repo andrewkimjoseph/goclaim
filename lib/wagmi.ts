@@ -1,8 +1,37 @@
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import {
+  injectedWallet,
+  metaMaskWallet,
+  rabbyWallet,
+  valoraWallet,
+  walletConnectWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 import { http, createConfig } from "wagmi";
 import { celo } from "wagmi/chains";
-import { injected, walletConnect } from "wagmi/connectors";
 
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
+const drpcKey = process.env.NEXT_PUBLIC_DRPC_API_KEY;
+const celoTransport = drpcKey
+  ? http(`https://lb.drpc.live/celo/${drpcKey}`)
+  : http();
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Recommended",
+      wallets: [
+        walletConnectWallet,
+        injectedWallet,
+        rabbyWallet,
+        metaMaskWallet,
+        valoraWallet,
+      ],
+    },
+  ],
+  {
+    appName: "GoClaim",
+    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
+  }
+);
 
 export function isMiniPay(): boolean {
   if (typeof window === "undefined") return false;
@@ -12,14 +41,9 @@ export function isMiniPay(): boolean {
 
 export const config = createConfig({
   chains: [celo],
-  connectors: [
-    injected(),
-    ...(projectId
-      ? [walletConnect({ projectId, showQrModal: true })]
-      : []),
-  ],
+  connectors,
   transports: {
-    [celo.id]: http(),
+    [celo.id]: celoTransport,
   },
   ssr: true,
 });
