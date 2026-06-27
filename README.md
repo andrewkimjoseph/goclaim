@@ -122,7 +122,7 @@ Celo mainnet contracts (`lib/onchain/constants.ts`):
 | UBI Scheme proxy | `0x43d72Ff17701B2DA814620735C39C620Ce0ea4A1` | `claim`, `hasClaimed`, `checkEntitlement` |
 | G$ token | `0x62B8B11039FcfE5aB0C56E502b1C372A3d2a9c7A` | Transfer to root after claim |
 
-Smart accounts use EntryPoint v0.7 simple accounts via `permissionless`. UserOps are submitted through Pimlico. Optional `DRPC_API_KEY` improves RPC reliability. Claim and transfer calldata include a GOCLAIM attribution suffix (`lib/onchain/attribution.ts`).
+Smart accounts use EntryPoint v0.7 simple accounts via `permissionless`. UserOps are submitted through Pimlico. Optional `DRPC_API_KEY` improves RPC reliability. Claim, transfer, and root-wallet `connectAccount` calldata include a GOCLAIM attribution suffix (`lib/onchain/attribution.ts`).
 
 ## Security model
 

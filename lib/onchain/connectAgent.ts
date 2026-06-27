@@ -1,4 +1,5 @@
 import { encodeFunctionData, type Address, type Hex } from "viem";
+import { taggedCalldata } from "./attribution";
 import { identityAbi } from "./abis/identity";
 import { IDENTITY_PROXY_ADDRESS } from "./constants";
 import { publicClient } from "./config";
@@ -12,6 +13,10 @@ export function encodeConnectAccount(smartAccountAddress: Address): Hex {
     functionName: "connectAccount",
     args: [smartAccountAddress],
   });
+}
+
+export function encodeTaggedConnectAccount(smartAccountAddress: Address): Hex {
+  return taggedCalldata(encodeConnectAccount(smartAccountAddress));
 }
 
 export async function readConnectedRoot(

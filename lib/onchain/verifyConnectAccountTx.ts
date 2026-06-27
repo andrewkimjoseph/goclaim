@@ -7,6 +7,7 @@ import {
 import { identityAbi } from "./abis/identity";
 import { IDENTITY_PROXY_ADDRESS } from "./constants";
 import { publicClient } from "./config";
+import { stripDataSuffix } from "./attribution";
 import { getLinkStatus } from "./eligibility";
 
 export async function verifyConnectAccountTx({
@@ -34,9 +35,10 @@ export async function verifyConnectAccountTx({
     throw new Error("Transaction was not sent to GoodDollar identity contract");
   }
 
+  const calldata = stripDataSuffix(tx.input as Hex);
   const decoded = decodeFunctionData({
     abi: identityAbi,
-    data: tx.input as Hex,
+    data: calldata,
   });
 
   if (decoded.functionName !== "connectAccount") {
