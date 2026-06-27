@@ -80,6 +80,7 @@ Railway Worker -> Celo.
 ```toml
 [build]
 builder = "NIXPACKS"
+buildCommand = "echo skip-cron-build"
 
 [deploy]
 startCommand = 'curl -sf -X POST "$NEXT_PUBLIC_APP_URL/api/internal/trigger-claims" -H "Authorization: Bearer $CRON_SECRET"'
@@ -87,12 +88,21 @@ restartPolicyType = "NEVER"
 cronSchedule = "0 12 * * *"
 ```
 
+- `buildCommand = "echo skip-cron-build"` — the cron only fires `curl`, so it must NOT run
+  `next build`. Without this, Nixpacks auto-runs `npm run build`, which prerenders `/_not-found`,
+  evaluates the wagmi config, and fails with a WalletConnect error because the cron service has no
+  `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`. Skipping the build avoids both the wasted work and that
+  failure.
 - `restartPolicyType = "NEVER"` — a cron must run once and exit. `ON_FAILURE`/always-on makes
   Railway treat it as a long-running service and it never gets scheduled.
 - `cronSchedule = "0 12 * * *"` — daily at 12:00 UTC.
 - The start command uses `curl` (present in Nixpacks images). `-s` silences progress; `-f` exits
   non-zero on an HTTP 4xx/5xx so a failed trigger shows as a failed cron run. Railway runs the
   command in a shell, so no `sh -c` wrapper is needed.
+
+> The worker's `railway.toml` likewise sets `buildCommand = "node_modules/.bin/prisma generate"`
+> so the worker only generates the Prisma client and skips `next build` too — neither Railway
+> service needs the Next.js web build (that runs on Vercel).
 
 ### Create the cron service
 
@@ -118,6 +128,9 @@ startCommand = "node -e \"fetch(process.env.NEXT_PUBLIC_APP_URL+'/api/internal/t
 
 - **Cron service still using `railway.toml`** — it will run the worker and crash with
   `Missing UPSTASH_REDIS_URL`. Point its config file path at `railway.cron.toml`.
+- **Build failed prerendering `/_not-found` with a WalletConnect error** — the cron tried to run
+  `next build` without `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`. `railway.cron.toml` skips the build
+  via `buildCommand`; make sure the cron service is using that config file.
 - **Build image failed on an old Node** — Next 16 needs Node 20.9+; this repo pins Node 24 (see top of this file).
 - **Restart Policy not `Never`** — Railway won't schedule a service it considers always-on (set via `railway.cron.toml`).
 - **`NEXT_PUBLIC_APP_URL` / `CRON_SECRET` missing or mismatched** with Vercel.

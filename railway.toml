@@ -1,5 +1,6 @@
 [build]
 builder = "NIXPACKS"
+buildCommand = "node_modules/.bin/prisma generate"
 
 [deploy]
 startCommand = "node_modules/.bin/tsx worker/index.ts"
