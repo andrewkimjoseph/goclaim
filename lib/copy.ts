@@ -3,7 +3,7 @@ export const copy = {
     tagline: "Autopilot UBI",
     headline: "Your UBI, on autopilot.",
     subhead:
-      "GoClaim creates a smart account that claims GoodDollar for you every day and sends G$ straight to your wallet.",
+      "GoClaim creates a smart account that GoClaims GoodDollar for you every day and sends G$ straight to your wallet.",
     footer: "GoClaim — built on Celo + GoodDollar",
     howItWorks: "How it works",
     steps: [
@@ -20,7 +20,7 @@ export const copy = {
       {
         title: "Earn",
         description:
-          "G$ is claimed daily and sent to your wallet automatically.",
+          "G$ is GoClaimed daily and sent to your wallet automatically.",
       },
     ],
   },
@@ -54,19 +54,19 @@ export const copy = {
     title: "Set up GoClaim",
     step1: {
       title: "Smart account created",
-      body: "Your GoClaim smart account is ready. It will claim G$ and send it to your wallet.",
+      body: "Your GoClaim smart account is ready. It will GoClaim G$ and send it to your wallet.",
     },
     step2: {
       title: "Link to GoodDollar",
-      body: "Approve one transaction from your wallet. This tells GoodDollar your smart account can claim for you.",
+      body: "Approve one transaction from your wallet. This tells GoodDollar your GoClaim smart account can claim for you.",
       cta: "Link smart account to GoodDollar",
     },
     step3: {
       title: "All set",
       bodyLinked: (claimSchedule: string) =>
-        `First claim runs ${claimSchedule}. G$ goes to your wallet.`,
+        `First GoClaim runs ${claimSchedule}. G$ goes to your wallet.`,
       bodyPending: (claimSchedule: string) =>
-        `Complete step 2 to enable daily claims ${claimSchedule}.`,
+        `Complete step 2 to enable daily GoClaims ${claimSchedule}.`,
     },
     goToDashboard: "Go to Dashboard",
   },
@@ -74,7 +74,7 @@ export const copy = {
     cta: "Link smart account to GoodDollar",
     confirming: "Confirming...",
     confirmInWallet: "Confirm in wallet...",
-    linked: "Smart account linked — you're all set",
+    linked: "Smart account linked — GoClaim is ready",
     connectWalletFirst: "Connect your GoodDollar wallet first.",
     switchWallet: "Switch to the wallet you signed in with.",
     wrongWallet: "Connected wallet does not match your signed-in wallet.",
@@ -83,17 +83,18 @@ export const copy = {
     headlineActive: "You're all set",
     headlineSetup: "Welcome back",
     subheadActive: (claimSchedule: string) =>
-      `G$ is claimed ${claimSchedule} and sent to your wallet.`,
-    subheadSetup: "Link your smart account to GoodDollar to start claiming.",
+      `G$ is GoClaimed ${claimSchedule} and sent to your wallet.`,
+    subheadSetup:
+      "Link your smart account to GoodDollar to start GoClaiming.",
     loading: "Loading...",
     setupGoClaim: "Set up GoClaim",
     noAgent: "Your GoClaim smart account is not set up yet.",
-    totalClaims: "Total claims",
-    totalGdClaimed: "Total G$ claimed",
-    lastClaimed: "Last claimed",
+    totalGoClaims: "Total GoClaims",
+    totalGGoClaimed: "Total G$ GoClaimed",
+    lastGoClaimed: "Last GoClaim",
     smartAccountLabel: "GoClaim smart account",
     smartAccountHint:
-      "This smart account claims for you automatically.",
+      "This GoClaim smart account claims for you automatically.",
     walletLabel: "Your wallet (receives G$)",
     finishSetupCta: "Finish setup",
     backToHome: "Back to home",
@@ -103,17 +104,17 @@ export const copy = {
     title: "Finish setup",
     signedIn: "Signed in",
     linkSmartAccount: "Link smart account to GoodDollar",
-    claimsStart: "Daily claims start",
+    goClaimsStart: "Daily GoClaims start",
   },
   agentStatus: {
     cardTitle: "GoClaim status",
     active: {
       label: "Active",
-      description: "G$ is claimed every day and sent to your wallet.",
+      description: "G$ is GoClaimed every day and sent to your wallet.",
     },
     pending: {
       label: "Setup incomplete",
-      description: "Link your smart account to GoodDollar to start.",
+      description: "Link your smart account to GoodDollar to start GoClaiming.",
     },
     linked_other: {
       label: "Wrong wallet linked",
@@ -122,16 +123,16 @@ export const copy = {
     },
     inactive: {
       label: "Paused",
-      description: "Claiming is turned off.",
+      description: "GoClaiming is turned off.",
     },
   },
-  claimHistory: {
-    title: "Claim history",
+  goClaimHistory: {
+    title: "GoClaim history",
     empty: (claimSchedule: string) =>
-      `No claims yet. After you link your smart account, the first claim runs ${claimSchedule}.`,
+      `No GoClaims yet. After you link your smart account, the first GoClaim runs ${claimSchedule}.`,
     date: "Date",
     status: "Status",
-    amount: "Amount sent",
+    amount: "G$ sent",
     receipt: "Receipt",
     viewOnCeloscan: "View on Celoscan",
   },
@@ -149,7 +150,7 @@ export const copy = {
       {
         question: "What is GoClaim?",
         answer:
-          "GoClaim claims your daily GoodDollar UBI for you and sends G$ to your wallet automatically.",
+          "GoClaim GoClaims your daily GoodDollar UBI for you and sends G$ to your wallet automatically.",
       },
       {
         question: "Who can use it?",
@@ -159,12 +160,12 @@ export const copy = {
       {
         question: "How does setup work?",
         answer:
-          "Connect your wallet, sign in, then link your GoClaim smart account to GoodDollar once. After that, claims run on their own.",
+          "Connect your wallet, sign in, then link your GoClaim smart account to GoodDollar once. After that, GoClaims run on their own.",
       },
       {
-        question: "When are claims made?",
+        question: "When are GoClaims made?",
         answer:
-          "Every day at 12:00 PM UTC. G$ is sent to your wallet right after each claim.",
+          "Every day at 12:00 PM UTC. G$ is sent to your wallet right after each GoClaim.",
       },
       {
         question: "Where does my G$ go?",
@@ -174,12 +175,12 @@ export const copy = {
       {
         question: "What is the smart account?",
         answer:
-          "A GoClaim-managed account on Celo that claims UBI on your behalf. You approve it once in GoodDollar, then it runs in the background.",
+          "A GoClaim-managed account on Celo that GoClaims UBI on your behalf. You approve it once in GoodDollar, then it runs in the background.",
       },
       {
         question: "Do I need to come back every day?",
         answer:
-          "No. After setup, GoClaim handles daily claims automatically. Check your dashboard anytime to see claim history.",
+          "No. After setup, GoClaim handles daily GoClaims automatically. Check your dashboard anytime to see GoClaim history.",
       },
       {
         question: "Is sign-in free?",

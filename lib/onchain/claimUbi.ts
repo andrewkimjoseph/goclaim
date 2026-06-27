@@ -108,7 +108,10 @@ export function formatEntitlementGd(entitlementWei: string): string {
   return formatUnits(BigInt(entitlementWei), 18);
 }
 
-export function formatGdWholeNumber(amountWei: string): string {
-  const whole = BigInt(amountWei) / BigInt("1000000000000000000");
-  return whole.toString();
+export function formatGdAmount(amountWei: string): string {
+  let formatted = formatUnits(BigInt(amountWei), 18);
+  if (formatted.includes(".")) {
+    formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
+  }
+  return formatted || "0";
 }

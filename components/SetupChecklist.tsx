@@ -34,7 +34,7 @@ export function SetupChecklist({
         <li className="flex items-center gap-3">
           <span className="step-badge-todo shrink-0">3</span>
           <span className="text-sm text-foreground/50">
-            {copy.setupChecklist.claimsStart}
+            {copy.setupChecklist.goClaimsStart}
           </span>
         </li>
       </ul>

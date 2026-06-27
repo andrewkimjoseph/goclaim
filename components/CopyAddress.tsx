@@ -48,7 +48,7 @@ export function CopyAddress({ address, label, hint, nested }: CopyAddressProps) 
   return (
     <div className="card">
       {label && (
-        <p className="text-xs font-display font-semibold text-foreground/60 mb-3">
+        <p className="text-xs font-display font-semibold text-shell mb-3">
           {label}
         </p>
       )}

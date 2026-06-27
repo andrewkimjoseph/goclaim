@@ -184,33 +184,43 @@ export default function DashboardPage() {
         />
 
         <div className="card">
-          <p className="text-xs text-foreground/60">{copy.dashboard.totalClaims}</p>
+          <p className="text-xs font-display font-semibold text-shell">{copy.dashboard.totalGoClaims}</p>
           <p className="font-display font-extrabold text-3xl text-primary mt-2">
             {status.lifetimeClaims ?? 0}
           </p>
           {status.lastClaimedAt && (
             <p className="text-xs text-foreground/60 mt-1">
-              {copy.dashboard.lastClaimed}:{" "}
+              {copy.dashboard.lastGoClaimed}:{" "}
               {new Date(status.lastClaimedAt).toLocaleString()}
             </p>
           )}
         </div>
 
         <div className="card">
-          <p className="text-xs text-foreground/60">
-            {copy.dashboard.totalGdClaimed}
+          <p className="text-xs font-display font-semibold text-shell">
+            {copy.dashboard.totalGGoClaimed}
           </p>
-          <p className="font-display font-extrabold text-3xl text-primary mt-2">
+          <p
+            className="font-display font-extrabold text-3xl text-primary mt-2 truncate"
+            title={status.lifetimeGdClaimed ?? "0"}
+          >
             {status.lifetimeGdClaimed ?? "0"}
           </p>
         </div>
 
         {simpleSmartAccount && (
-          <details className="card">
-            <summary className="text-xs font-display font-semibold text-foreground/60 cursor-pointer">
-              {copy.dashboard.smartAccountLabel}
+          <details className="card group [&::-webkit-details-marker]:hidden">
+            <summary className="text-xs font-display font-semibold text-shell cursor-pointer list-none flex items-center justify-between gap-3">
+              <span className="min-w-0">{copy.dashboard.smartAccountLabel}</span>
+              <span
+                aria-hidden
+                className="inline-flex h-7 w-7 shrink-0 items-center justify-center border-2 border-black rounded-brutal bg-white font-display font-bold text-lg leading-none text-foreground shadow-[2px_2px_0_0_#000000] group-open:bg-primary group-open:text-white transition-colors"
+              >
+                <span className="group-open:hidden">+</span>
+                <span className="hidden group-open:block -mt-0.5">−</span>
+              </span>
             </summary>
-            <p className="text-xs text-foreground/60 mt-2 mb-2">
+            <p className="text-xs text-foreground/60 mt-3 pt-3 border-t-2 border-black mb-2">
               {copy.dashboard.smartAccountHint}
             </p>
             <CopyAddress address={simpleSmartAccount} nested />

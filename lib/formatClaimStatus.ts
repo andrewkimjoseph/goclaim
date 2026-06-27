@@ -4,9 +4,9 @@ export type ClaimDisplayStatus = {
 };
 
 const SKIP_REASONS: Record<string, string> = {
-  already_claimed: "Already claimed today",
+  already_claimed: "Already GoClaimed today",
   not_whitelisted: "Not verified on GoodDollar",
-  no_entitlement: "No claim available yet",
+  no_entitlement: "No GoClaim available yet",
   "No active agent wallet": "Smart account not active",
 };
 
@@ -15,7 +15,7 @@ export function formatClaimStatus(
   errorMsg?: string | null
 ): ClaimDisplayStatus {
   if (status === "success") {
-    return { label: "Claimed" };
+    return { label: "GoClaimed" };
   }
 
   if (status === "failed") {

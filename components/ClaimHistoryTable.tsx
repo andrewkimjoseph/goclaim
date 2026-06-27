@@ -32,10 +32,10 @@ export function ClaimHistoryTable({ logs }: ClaimHistoryTableProps) {
     return (
       <div className="card">
         <h3 className="font-display font-bold text-lg mb-2">
-          {copy.claimHistory.title}
+          {copy.goClaimHistory.title}
         </h3>
         <p className="text-center text-foreground/60 text-sm">
-          {copy.claimHistory.empty(claimSchedule)}
+          {copy.goClaimHistory.empty(claimSchedule)}
         </p>
       </div>
     );
@@ -44,16 +44,16 @@ export function ClaimHistoryTable({ logs }: ClaimHistoryTableProps) {
   return (
       <div className="card flex flex-col">
       <h3 className="font-display font-bold text-lg mb-3 shrink-0">
-        {copy.claimHistory.title}
+        {copy.goClaimHistory.title}
       </h3>
       <div className="overflow-x-auto overflow-y-auto max-h-[min(12rem,35vh)] min-h-0">
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-white">
             <tr className="text-left text-foreground/60 border-b-2 border-black">
-              <th className="pb-2 pr-4">{copy.claimHistory.date}</th>
-              <th className="pb-2 pr-4">{copy.claimHistory.status}</th>
-              <th className="pb-2 pr-4">{copy.claimHistory.amount}</th>
-              <th className="pb-2">{copy.claimHistory.receipt}</th>
+              <th className="pb-2 pr-4">{copy.goClaimHistory.date}</th>
+              <th className="pb-2 pr-4">{copy.goClaimHistory.status}</th>
+              <th className="pb-2 pr-4">{copy.goClaimHistory.amount}</th>
+              <th className="pb-2">{copy.goClaimHistory.receipt}</th>
             </tr>
           </thead>
           <tbody>
@@ -88,7 +88,7 @@ export function ClaimHistoryTable({ logs }: ClaimHistoryTableProps) {
                         rel="noopener noreferrer"
                         className="text-primary hover:underline text-xs"
                       >
-                        {copy.claimHistory.viewOnCeloscan}
+                        {copy.goClaimHistory.viewOnCeloscan}
                       </a>
                     ) : (
                       <span className="text-foreground/40 text-xs">
