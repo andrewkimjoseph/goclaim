@@ -72,7 +72,8 @@ export async function POST(request: NextRequest) {
       userId: user.id,
     });
 
-    cookies().set(sessionCookieOptions(token));
+    const cookieStore = await cookies();
+    cookieStore.set(sessionCookieOptions(token));
 
     return NextResponse.json({ ok: true, userId: user.id });
   } catch (error) {

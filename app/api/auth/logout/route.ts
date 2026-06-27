@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { clearSessionCookieOptions } from "@/lib/auth";
 
 export async function POST() {
-  cookies().set(clearSessionCookieOptions());
+  const cookieStore = await cookies();
+  cookieStore.set(clearSessionCookieOptions());
   return NextResponse.json({ ok: true });
 }
