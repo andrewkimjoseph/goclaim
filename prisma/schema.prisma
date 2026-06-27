@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  rootAddress  String        @unique
-  createdAt    DateTime      @default(now())
-  agentWallet  AgentWallet?
-  claimLogs    ClaimLog[]
-  transferLogs TransferLog[]
+  id                 String              @id @default(cuid())
+  rootAddress        String              @unique
+  createdAt          DateTime            @default(now())
+  agentWallet        AgentWallet?
+  claimLogs          ClaimLog[]
+  transferLogs       TransferLog[]
+  connectAccountLog  ConnectAccountLog?
 }
 
 model AgentWallet {
@@ -53,6 +54,16 @@ model TransferLog {
   txHash           String
   userOpHash       String
   transferredAt    DateTime @default(now())
+}
+
+model ConnectAccountLog {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  smartAccountAddress String
+  rootAddress         String
+  txHash              String   @unique
+  connectedAt         DateTime @default(now())
 }
 
 model Nonce {
