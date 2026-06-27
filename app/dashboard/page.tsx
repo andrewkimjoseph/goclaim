@@ -8,10 +8,8 @@ import { AgentStatusCard } from "@/components/AgentStatusCard";
 import { ClaimHistoryTable } from "@/components/ClaimHistoryTable";
 import { CopyAddress } from "@/components/CopyAddress";
 import { OnboardingModal } from "@/components/OnboardingModal";
-import { ConnectAgentButton } from "@/components/ConnectAgentButton";
 import { SetupChecklist } from "@/components/SetupChecklist";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { type Address } from "viem";
 import { copy, formatClaimSchedule } from "@/lib/copy";
 
 type AgentStatus = {
@@ -228,16 +226,6 @@ export default function DashboardPage() {
           <CopyAddress
             address={status.rootAddress}
             label={copy.dashboard.walletLabel}
-          />
-        )}
-
-        {!linkComplete && simpleSmartAccount && (
-          <ConnectAgentButton
-            smartAccountAddress={simpleSmartAccount as Address}
-            rootAddress={status.rootAddress as Address | undefined}
-            onConnected={fetchStatus}
-            className="btn-primary"
-            showTechnicalDetails
           />
         )}
 
