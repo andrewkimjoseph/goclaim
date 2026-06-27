@@ -21,7 +21,6 @@ type ConnectAgentButtonProps = {
   onConnected?: () => void;
   className?: string;
   label?: string;
-  showTechnicalDetails?: boolean;
 };
 
 export function ConnectAgentButton({
@@ -30,7 +29,6 @@ export function ConnectAgentButton({
   onConnected,
   className = "btn-primary",
   label = copy.connect.cta,
-  showTechnicalDetails = false,
 }: ConnectAgentButtonProps) {
   const { address, chainId, isConnected } = useAccount();
   const { switchChainAsync } = useSwitchChain();
@@ -122,14 +120,6 @@ export function ConnectAgentButton({
 
   return (
     <div className="space-y-2">
-      {showTechnicalDetails && (
-        <details className="text-xs text-foreground/60">
-          <summary className="cursor-pointer">{copy.connect.technicalDetails}</summary>
-          <p className="font-mono break-all mt-1">
-            {copy.connect.technicalLinking(smartAccountAddress)}
-          </p>
-        </details>
-      )}
       <button
         type="button"
         onClick={handleConnect}

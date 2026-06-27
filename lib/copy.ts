@@ -81,8 +81,6 @@ export const copy = {
     connectWalletFirst: "Connect your GoodDollar wallet first.",
     switchWallet: "Switch to the wallet you signed in with.",
     wrongWallet: "Connected wallet does not match your signed-in wallet.",
-    technicalDetails: "Technical details",
-    technicalLinking: (address: string) => `Linking address ${address}`,
   },
   dashboard: {
     headlineActive: "You're all set",
