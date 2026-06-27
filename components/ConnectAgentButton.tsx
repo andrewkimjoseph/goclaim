@@ -65,12 +65,40 @@ export function ConnectAgentButton({
     address.toLowerCase() !== expectedRoot;
 
   useEffect(() => {
-    if (isSuccess) {
-      refetchConnected();
-      onConnected?.();
-      reset();
+    if (!isSuccess || !txHash) return;
+
+    let cancelled = false;
+
+    async function logConnectAccount() {
+      try {
+        const res = await fetch("/api/agent/connect-log", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ txHash }),
+        });
+        if (!res.ok && !cancelled) {
+          console.error("Failed to log connectAccount:", await res.text());
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Failed to log connectAccount:", err);
+        }
+      }
+
+      if (!cancelled) {
+        refetchConnected();
+        onConnected?.();
+        reset();
+      }
     }
-  }, [isSuccess, onConnected, refetchConnected, reset]);
+
+    void logConnectAccount();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isSuccess, txHash, onConnected, refetchConnected, reset]);
 
   useEffect(() => {
     if (writeError) {
