@@ -171,10 +171,12 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <SetupChecklist
-          linkComplete={linkComplete}
-          onFinishSetup={() => setShowOnboarding(true)}
-        />
+        {!showOnboarding && (
+          <SetupChecklist
+            linkComplete={linkComplete}
+            onFinishSetup={() => setShowOnboarding(true)}
+          />
+        )}
 
         <AgentStatusCard
           status={
@@ -235,7 +237,6 @@ export default function DashboardPage() {
       {showOnboarding && simpleSmartAccount && (
         <OnboardingModal
           smartAccountAddress={simpleSmartAccount}
-          isCounterfactual={status.isCounterfactual}
           rootAddress={status.rootAddress}
           linkComplete={linkComplete}
           onConnected={fetchStatus}
