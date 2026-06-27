@@ -37,6 +37,10 @@
     @apply w-full bg-transparent text-white font-display font-semibold px-6 py-3 border-2 border-white rounded-brutal hover:bg-white/10 active:translate-x-[2px] active:translate-y-[2px] transition-transform;
   }
 
+  .btn-hero-tertiary {
+    @apply w-full bg-transparent text-white font-display font-semibold px-6 py-3 border-2 border-accent rounded-brutal hover:bg-white/10 active:translate-x-[2px] active:translate-y-[2px] transition-transform;
+  }
+
   .card {
     @apply bg-white text-foreground border-2 border-black shadow-brutal p-4 rounded-brutal;
   }
