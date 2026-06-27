@@ -5,6 +5,7 @@ import { RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import { useState, type ReactNode } from "react";
 import { MiniPayAutoConnect } from "@/components/MiniPayAutoConnect";
+import { SessionWalletGuard } from "@/components/SessionWalletGuard";
 import { config } from "@/lib/wagmi";
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -22,6 +23,7 @@ export function Providers({ children }: { children: ReactNode }) {
           })}
         >
           <MiniPayAutoConnect />
+          <SessionWalletGuard />
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>
