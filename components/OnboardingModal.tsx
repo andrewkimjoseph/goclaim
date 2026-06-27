@@ -8,7 +8,6 @@ import { copy, formatClaimSchedule } from "@/lib/copy";
 type OnboardingModalProps = {
   smartAccountAddress: string;
   rootAddress?: string;
-  isCounterfactual?: boolean;
   linkComplete?: boolean;
   onClose: () => void;
   onConnected?: () => void;
@@ -17,7 +16,6 @@ type OnboardingModalProps = {
 export function OnboardingModal({
   smartAccountAddress,
   rootAddress,
-  isCounterfactual,
   linkComplete,
   onClose,
   onConnected,
@@ -64,24 +62,6 @@ export function OnboardingModal({
               <p className="text-sm text-foreground/70 mt-1">
                 {copy.onboarding.step1.body}
               </p>
-              <details className="mt-3">
-                <summary className="text-xs font-display font-semibold text-primary cursor-pointer">
-                  {copy.onboarding.step1.showAddress}
-                </summary>
-                <code className="text-xs break-all block mt-2 border-2 border-black p-2 rounded-brutal text-foreground bg-white">
-                  {smartAccountAddress}
-                </code>
-                {isCounterfactual && (
-                  <div className="mt-2">
-                    <p className="text-xs font-display font-semibold text-foreground/60">
-                      {copy.onboarding.step1.celoscanTitle}
-                    </p>
-                    <p className="text-xs text-foreground/60 mt-1">
-                      {copy.onboarding.step1.celoscanBody}
-                    </p>
-                  </div>
-                )}
-              </details>
             </div>
           </li>
 
@@ -132,7 +112,7 @@ export function OnboardingModal({
           </li>
         </ol>
 
-        <button onClick={onClose} className="btn-primary mt-6">
+        <button onClick={onClose} className="btn-secondary mt-6">
           {copy.onboarding.goToDashboard}
         </button>
         </div>

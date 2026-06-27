@@ -54,10 +54,6 @@ export const copy = {
     step1: {
       title: "Smart account created",
       body: "Your GoClaim smart account is ready. It will claim G$ and send it to your wallet.",
-      showAddress: "Show smart account address",
-      celoscanTitle: "Why does the address look empty on Celoscan?",
-      celoscanBody:
-        "Your smart account activates on its first claim. Until then, block explorers may show a normal wallet address — that is expected.",
     },
     step2: {
       title: "Link to GoodDollar",
