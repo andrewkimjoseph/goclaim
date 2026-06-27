@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  useAccount,
-  useReadContract,
-  useSwitchChain,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { celo } from "wagmi/chains";
+import { useState } from "react";
+import { useAccount, useReadContract } from "wagmi";
 import { type Address, zeroAddress } from "viem";
 import { identityAbi } from "@/lib/onchain/abis/identity";
 import { IDENTITY_CONNECT_TARGET } from "@/lib/onchain/connectAgent";
+import {
+  browserPublicClient,
+  sendTaggedConnectAccount,
+} from "@/lib/onchain/browserWallet";
 import { friendlyConnectError } from "@/lib/friendlyTxError";
 import { copy } from "@/lib/copy";
 
@@ -30,10 +27,7 @@ export function ConnectAgentButton({
   className = "btn-primary",
   label = copy.connect.cta,
 }: ConnectAgentButtonProps) {
-  const { address, chainId, isConnected } = useAccount();
-  const { switchChainAsync } = useSwitchChain();
-  const { writeContract, data: txHash, isPending, error: writeError, reset } =
-    useWriteContract();
+  const { address, isConnected } = useAccount();
 
   const { data: connectedTo, refetch: refetchConnected } = useReadContract({
     address: IDENTITY_CONNECT_TARGET,
@@ -42,11 +36,9 @@ export function ConnectAgentButton({
     args: [smartAccountAddress],
   });
 
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
-
   const [localError, setLocalError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   const expectedRoot = rootAddress?.toLowerCase();
   const connectedRoot =
@@ -64,48 +56,6 @@ export function ConnectAgentButton({
     address &&
     address.toLowerCase() !== expectedRoot;
 
-  useEffect(() => {
-    if (!isSuccess || !txHash) return;
-
-    let cancelled = false;
-
-    async function logConnectAccount() {
-      try {
-        const res = await fetch("/api/agent/connect-log", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ txHash }),
-        });
-        if (!res.ok && !cancelled) {
-          console.error("Failed to log connectAccount:", await res.text());
-        }
-      } catch (err) {
-        if (!cancelled) {
-          console.error("Failed to log connectAccount:", err);
-        }
-      }
-
-      if (!cancelled) {
-        refetchConnected();
-        onConnected?.();
-        reset();
-      }
-    }
-
-    void logConnectAccount();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isSuccess, txHash, onConnected, refetchConnected, reset]);
-
-  useEffect(() => {
-    if (writeError) {
-      setLocalError(friendlyConnectError(writeError));
-    }
-  }, [writeError]);
-
   async function handleConnect() {
     setLocalError(null);
 
@@ -119,20 +69,40 @@ export function ConnectAgentButton({
       return;
     }
 
+    setIsPending(true);
+
     try {
-      if (chainId !== celo.id) {
-        await switchChainAsync({ chainId: celo.id });
+      const hash = await sendTaggedConnectAccount({
+        account: address,
+        smartAccountAddress,
+      });
+
+      setIsPending(false);
+      setIsConfirming(true);
+
+      await browserPublicClient.waitForTransactionReceipt({ hash });
+
+      try {
+        const res = await fetch("/api/agent/connect-log", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ txHash: hash }),
+        });
+        if (!res.ok) {
+          console.error("Failed to log connectAccount:", await res.text());
+        }
+      } catch (err) {
+        console.error("Failed to log connectAccount:", err);
       }
 
-      writeContract({
-        address: IDENTITY_CONNECT_TARGET,
-        abi: identityAbi,
-        functionName: "connectAccount",
-        args: [smartAccountAddress],
-        chainId: celo.id,
-      });
+      await refetchConnected();
+      onConnected?.();
     } catch (err) {
       setLocalError(friendlyConnectError(err as { message?: string }));
+    } finally {
+      setIsPending(false);
+      setIsConfirming(false);
     }
   }
 
