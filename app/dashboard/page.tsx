@@ -48,13 +48,7 @@ export default function DashboardPage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const autoOnboardingShown = useRef(false);
-  const [claimSchedule, setClaimSchedule] = useState<string>(
-    copy.time.claimScheduleUtc
-  );
-
-  useEffect(() => {
-    setClaimSchedule(formatClaimSchedule());
-  }, []);
+  const [claimSchedule] = useState(() => formatClaimSchedule());
 
   const fetchStatus = useCallback(async () => {
     setLoading(true);
@@ -86,16 +80,15 @@ export default function DashboardPage() {
   const linkComplete = status?.linkComplete ?? false;
 
   useEffect(() => {
-    if (!simpleSmartAccount || linkComplete) {
-      if (linkComplete) setShowOnboarding(false);
-      return;
-    }
+    if (!simpleSmartAccount || linkComplete) return;
 
     if (!autoOnboardingShown.current) {
       autoOnboardingShown.current = true;
       setShowOnboarding(true);
     }
   }, [simpleSmartAccount, linkComplete]);
+
+  const showOnboardingModal = showOnboarding && !linkComplete;
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
@@ -171,7 +164,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {!showOnboarding && (
+        {!showOnboardingModal && (
           <SetupChecklist
             linkComplete={linkComplete}
             onFinishSetup={() => setShowOnboarding(true)}
@@ -234,7 +227,7 @@ export default function DashboardPage() {
         <ClaimHistoryTable logs={status.claimLogs ?? []} />
       </main>
 
-      {showOnboarding && simpleSmartAccount && (
+      {showOnboardingModal && simpleSmartAccount && (
         <OnboardingModal
           smartAccountAddress={simpleSmartAccount}
           rootAddress={status.rootAddress}

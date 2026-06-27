@@ -20,16 +20,9 @@ export function OnboardingModal({
   onClose,
   onConnected,
 }: OnboardingModalProps) {
-  const [linked, setLinked] = useState(linkComplete ?? false);
-  const [claimSchedule, setClaimSchedule] = useState<string>(copy.time.claimScheduleUtc);
-
-  useEffect(() => {
-    if (linkComplete) setLinked(true);
-  }, [linkComplete]);
-
-  useEffect(() => {
-    setClaimSchedule(formatClaimSchedule());
-  }, []);
+  const [connectedLocally, setConnectedLocally] = useState(false);
+  const linked = Boolean(linkComplete) || connectedLocally;
+  const [claimSchedule] = useState(() => formatClaimSchedule());
 
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
@@ -40,7 +33,7 @@ export function OnboardingModal({
   }, []);
 
   function handleConnected() {
-    setLinked(true);
+    setConnectedLocally(true);
     onConnected?.();
   }
 

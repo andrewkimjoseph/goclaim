@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatClaimStatus } from "@/lib/formatClaimStatus";
 import { copy, formatClaimSchedule } from "@/lib/copy";
 
@@ -26,11 +26,7 @@ function statusClass(status: string) {
 }
 
 export function ClaimHistoryTable({ logs }: ClaimHistoryTableProps) {
-  const [claimSchedule, setClaimSchedule] = useState<string>(copy.time.claimScheduleUtc);
-
-  useEffect(() => {
-    setClaimSchedule(formatClaimSchedule());
-  }, []);
+  const [claimSchedule] = useState(() => formatClaimSchedule());
 
   if (logs.length === 0) {
     return (
