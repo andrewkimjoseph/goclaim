@@ -95,6 +95,7 @@ Jobs are enqueued in waves of 50 with a 2s gap between waves (`lib/queue.ts`). T
 | **AgentWallet** | Smart account address, encrypted EOA key, `isActive`, `lastClaimedAt` |
 | **ClaimLog** | Per-attempt status (`success` / `skipped` / `failed`), optional tx hash |
 | **TransferLog** | 1:1 with successful claim; amount in wei, tx hash, userOp hash |
+| **ConnectAccountLog** | One-time GoodDollar `connectAccount` success per user (tx hash, addresses, timestamp) |
 | **Nonce** | SIWE anti-replay nonces |
 
 See `prisma/schema.prisma` for the full schema.
