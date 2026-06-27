@@ -94,6 +94,7 @@ export const copy = {
     setupGoClaim: "Set up GoClaim",
     noAgent: "Your GoClaim smart account is not set up yet.",
     totalClaims: "Total claims",
+    totalGdClaimed: "Total G$ claimed",
     lastClaimed: "Last claimed",
     smartAccountLabel: "GoClaim smart account",
     smartAccountHint:

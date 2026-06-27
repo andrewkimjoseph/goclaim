@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getLinkStatus } from "@/lib/onchain/eligibility";
 import { resolveAgentAddresses } from "@/lib/onchain/resolveAgentAddresses";
 import { publicClient } from "@/lib/onchain/config";
-import { formatEntitlementGd } from "@/lib/onchain/claimUbi";
+import { formatEntitlementGd, formatGdWholeNumber } from "@/lib/onchain/claimUbi";
 
 type TransferLogRow = {
   recipientAddress: string;
@@ -76,6 +76,15 @@ export async function GET() {
     select: { id: true },
   });
 
+  const transfers = await prisma.transferLog.findMany({
+    where: { userId: user.id },
+    select: { amountWei: true },
+  });
+  const totalWei = transfers.reduce(
+    (sum, t) => sum + BigInt(t.amountWei),
+    0n
+  );
+
   return NextResponse.json({
     hasAgent: true,
     rootAddress: user.rootAddress,
@@ -94,6 +103,7 @@ export async function GET() {
     linkComplete: link.linkComplete,
     whitelistedRoot: link.whitelistedRoot,
     lifetimeClaims: successfulClaims.length,
+    lifetimeGdClaimed: formatGdWholeNumber(totalWei.toString()),
     claimLogs: (user.claimLogs as ClaimLogRow[]).map((log) => ({
       id: log.id,
       status: log.status,

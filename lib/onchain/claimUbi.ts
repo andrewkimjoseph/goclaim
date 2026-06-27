@@ -107,3 +107,8 @@ export async function claimUbi(
 export function formatEntitlementGd(entitlementWei: string): string {
   return formatUnits(BigInt(entitlementWei), 18);
 }
+
+export function formatGdWholeNumber(amountWei: string): string {
+  const whole = BigInt(amountWei) / 10n ** 18n;
+  return whole.toString();
+}
