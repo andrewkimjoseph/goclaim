@@ -29,6 +29,20 @@ const config: Config = {
       borderRadius: {
         brutal: "2px",
       },
+      keyframes: {
+        modalFadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        modalSlideUp: {
+          from: { transform: "translateY(100%)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
+      },
+      animation: {
+        modalFadeIn: "modalFadeIn 220ms ease-out forwards",
+        modalSlideUp: "modalSlideUp 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+      },
     },
   },
   plugins: [],
