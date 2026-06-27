@@ -9,7 +9,7 @@ import { processClaim } from "./jobs/processClaim";
 const connection = getRedisConnection();
 
 const concurrency = Number(process.env.WORKER_CONCURRENCY ?? "5");
-const drainDelay = Number(process.env.WORKER_DRAIN_DELAY_SEC ?? "30");
+const drainDelay = Number(process.env.WORKER_DRAIN_DELAY_SEC ?? "120");
 
 if (
   process.env.NODE_ENV === "development" &&

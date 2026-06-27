@@ -12,9 +12,19 @@
 1. Create a Redis database on Upstash
 2. Copy `UPSTASH_REDIS_URL` — the **Redis TCP** URL (`rediss://default:...@....upstash.io:6379`), not the REST URL
 
-**Command usage:** Redis is used only by BullMQ (claim queue). The dashboard and auth APIs do not touch Redis. An always-on worker polls Redis even when the queue is empty — tune `WORKER_DRAIN_DELAY_SEC` on Railway to limit idle commands.
+**Command usage:** Redis is used only by BullMQ (claim queue). The dashboard and auth APIs do not touch Redis. An always-on worker polls Redis even when the queue is empty — idle polling dominates Upstash command count. Tune `WORKER_DRAIN_DELAY_SEC` on Railway to limit it.
 
-**Local dev:** Do not run `npm run worker` unless you are testing the queue — it shares Upstash and doubles idle polling. For single claims, use `USER_ID=<cuid> npm run claim-test` instead. If you need a local worker, set `WORKER_DRAIN_DELAY_SEC=60` in `.env.local`.
+Rough idle polling estimates (one worker, 24/7):
+
+| `WORKER_DRAIN_DELAY_SEC` | Idle polls/month | Est. Redis commands/month |
+| --- | --- | --- |
+| 30 | ~86,400 | ~50k–90k |
+| 60 | ~43,200 | ~25k–45k |
+| 120 | ~21,600 | ~15k–25k |
+
+GoClaim cron runs once daily at 12:00 UTC, so 120s drain adds at most ~2 minutes before the worker picks up new jobs — acceptable for a daily batch.
+
+**Local dev:** Do not run `npm run worker` unless you are testing the queue — it shares Upstash and doubles idle polling. For single claims, use `USER_ID=<cuid> npm run claim-test` instead. If you need a local worker, set `WORKER_DRAIN_DELAY_SEC=120` in `.env.local`.
 
 ## 3. Generate secrets
 
@@ -48,7 +58,7 @@ Env vars:
 - `PIMLICO_API_KEY`
 - `DRPC_API_KEY` (optional)
 - `WORKER_CONCURRENCY` (optional, default `5`)
-- `WORKER_DRAIN_DELAY_SEC` (optional, default `30` — seconds between idle queue polls)
+- `WORKER_DRAIN_DELAY_SEC` (optional, default `120` — seconds between idle queue polls)
 
 Start command: `npm run worker` (via `railway.toml`).
 
@@ -56,10 +66,10 @@ Recommended Railway values for low Upstash command volume:
 
 ```
 WORKER_CONCURRENCY=5
-WORKER_DRAIN_DELAY_SEC=30
+WORKER_DRAIN_DELAY_SEC=120
 ```
 
-Redeploy the worker after changing these. Monitor Upstash → Usage over 24–48h.
+Redeploy the worker after changing these. Monitor Upstash → Usage over 24–48h; command count should drop ~4x compared to a 30s drain.
 
 ## 6. Railway Cron
 

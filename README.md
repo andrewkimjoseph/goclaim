@@ -85,7 +85,7 @@ sequenceDiagram
   Worker->>DB: ClaimLog + TransferLog
 ```
 
-Jobs are enqueued in waves of 50 with a 2s gap between waves (`lib/queue.ts`). The worker supports `WORKER_CONCURRENCY` (default 5) and `WORKER_DRAIN_DELAY_SEC` (default 30) to tune Upstash Redis usage.
+Jobs are enqueued in waves of 50 with a 2s gap between waves (`lib/queue.ts`). The worker supports `WORKER_CONCURRENCY` (default 5) and `WORKER_DRAIN_DELAY_SEC` (default 120) to tune Upstash Redis usage.
 
 ## Database schema
 
