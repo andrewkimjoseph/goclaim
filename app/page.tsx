@@ -24,7 +24,7 @@ export default function LandingPage() {
       credentials: "include",
     });
     if (createRes.ok) {
-      router.push("/dashboard?onboarding=1");
+      router.push("/dashboard");
     } else {
       router.push("/dashboard");
     }

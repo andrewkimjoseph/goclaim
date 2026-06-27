@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
 import { AgentStatusCard } from "@/components/AgentStatusCard";
@@ -25,6 +25,7 @@ type AgentStatus = {
   linkStatus?: "active" | "pending" | "linked_other";
   linkComplete?: boolean;
   lifetimeClaims?: number;
+  lifetimeGdClaimed?: string;
   claimLogs?: Array<{
     id: string;
     status: string;
@@ -42,9 +43,8 @@ type AgentStatus = {
   }>;
 };
 
-function DashboardContent() {
+export default function DashboardPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [status, setStatus] = useState<AgentStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -93,16 +93,11 @@ function DashboardContent() {
       return;
     }
 
-    if (searchParams.get("onboarding") === "1") {
-      setShowOnboarding(true);
-      return;
-    }
-
     if (!autoOnboardingShown.current) {
       autoOnboardingShown.current = true;
       setShowOnboarding(true);
     }
-  }, [searchParams, simpleSmartAccount, linkComplete]);
+  }, [simpleSmartAccount, linkComplete]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
@@ -212,7 +207,7 @@ function DashboardContent() {
 
         <div className="card">
           <p className="text-xs text-foreground/60">{copy.dashboard.totalClaims}</p>
-          <p className="font-display font-extrabold text-3xl text-primary">
+          <p className="font-display font-extrabold text-3xl text-primary mt-2">
             {status.lifetimeClaims ?? 0}
           </p>
           {status.lastClaimedAt && (
@@ -221,6 +216,15 @@ function DashboardContent() {
               {new Date(status.lastClaimedAt).toLocaleString()}
             </p>
           )}
+        </div>
+
+        <div className="card">
+          <p className="text-xs text-foreground/60">
+            {copy.dashboard.totalGdClaimed}
+          </p>
+          <p className="font-display font-extrabold text-3xl text-primary mt-2">
+            {status.lifetimeGdClaimed ?? "0"}
+          </p>
         </div>
 
         {simpleSmartAccount && (
@@ -262,26 +266,9 @@ function DashboardContent() {
           rootAddress={status.rootAddress}
           linkComplete={linkComplete}
           onConnected={fetchStatus}
-          onClose={() => {
-            setShowOnboarding(false);
-            router.replace("/dashboard");
-          }}
+          onClose={() => setShowOnboarding(false)}
         />
       )}
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="app-shell items-center justify-center">
-          <LoadingSpinner label={copy.dashboard.loading} />
-        </div>
-      }
-    >
-      <DashboardContent />
-    </Suspense>
   );
 }
