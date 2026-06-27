@@ -173,21 +173,6 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {!linkComplete && (
-          <div className="card">
-            <p className="text-sm text-foreground/80 mb-3">
-              {copy.dashboard.finishSetupBanner}
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowOnboarding(true)}
-              className="btn-primary text-sm"
-            >
-              {copy.dashboard.finishSetupCta}
-            </button>
-          </div>
-        )}
-
         <SetupChecklist
           linkComplete={linkComplete}
           onFinishSetup={() => setShowOnboarding(true)}

@@ -94,7 +94,6 @@ export const copy = {
     smartAccountHint:
       "This smart account claims for you automatically.",
     walletLabel: "Your wallet (receives G$)",
-    finishSetupBanner: "One step left: link your smart account to GoodDollar",
     finishSetupCta: "Finish setup",
     backToHome: "Back to home",
     signOut: "Sign out",
