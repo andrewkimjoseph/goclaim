@@ -47,8 +47,9 @@ export function OnboardingModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4">
-      <div className="card w-full max-w-[460px] max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-md overflow-hidden overscroll-none animate-modalFadeIn">
+      <div className="w-full max-w-[460px] px-4 pb-4 animate-modalSlideUp">
+        <div className="card w-full max-h-[90vh] overflow-y-auto">
         <h2 className="font-display font-extrabold text-xl mb-4 text-foreground">
           {copy.onboarding.title}
         </h2>
@@ -134,6 +135,7 @@ export function OnboardingModal({
         <button onClick={onClose} className="btn-primary mt-6">
           {copy.onboarding.goToDashboard}
         </button>
+        </div>
       </div>
     </div>
   );
