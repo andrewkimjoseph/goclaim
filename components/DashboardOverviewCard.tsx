@@ -5,6 +5,8 @@ type DashboardOverviewCardProps = {
   lifetimeGdClaimed: string;
   rootGdBalance: string | null;
   lastClaimedAt?: string | null;
+  streak?: number;
+  onStreakOpen?: () => void;
 };
 
 export function DashboardOverviewCard({
@@ -12,6 +14,8 @@ export function DashboardOverviewCard({
   lifetimeGdClaimed,
   rootGdBalance,
   lastClaimedAt,
+  streak,
+  onStreakOpen,
 }: DashboardOverviewCardProps) {
   return (
     <div className="card">
@@ -30,16 +34,36 @@ export function DashboardOverviewCard({
           <p className="text-xs font-display font-semibold text-shell">
             {copy.dashboard.totalGoClaims}
           </p>
-          <p className="font-display font-extrabold text-3xl text-primary mt-2">
-            {lifetimeClaims}
-          </p>
+          {onStreakOpen ? (
+            <button
+              type="button"
+              onClick={onStreakOpen}
+              aria-label={`${copy.dashboard.streakLabel}: ${streak ?? 0}`}
+              className="font-display font-extrabold text-4xl text-primary mt-2 flex items-center gap-1 hover:opacity-80 transition-opacity"
+            >
+              <span className="tabular-nums">{lifetimeClaims}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/flame.svg"
+                alt=""
+                width={36}
+                height={36}
+                className="shrink-0"
+                aria-hidden
+              />
+            </button>
+          ) : (
+            <p className="font-display font-extrabold text-4xl text-primary mt-2">
+              {lifetimeClaims}
+            </p>
+          )}
         </div>
         <div className="min-w-0">
           <p className="text-xs font-display font-semibold text-shell">
             {copy.dashboard.totalGGoClaimed}
           </p>
           <p
-            className="font-display font-extrabold text-3xl text-primary mt-2 truncate"
+            className="font-display font-extrabold text-4xl text-primary mt-2 truncate"
             title={lifetimeGdClaimed}
           >
             {lifetimeGdClaimed}

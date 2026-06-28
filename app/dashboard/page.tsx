@@ -10,7 +10,7 @@ import { DashboardOverviewCard } from "@/components/DashboardOverviewCard";
 import { AddressesCard } from "@/components/AddressesCard";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { SetupChecklist } from "@/components/SetupChecklist";
-import { StreakBadge, StreakModal } from "@/components/StreakCard";
+import { StreakModal } from "@/components/StreakCard";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { copy, formatClaimSchedule } from "@/lib/copy";
 
@@ -151,20 +151,12 @@ export default function DashboardPage() {
         <Link href="/">
           <BrandLogo size="nav" />
         </Link>
-        <div className="flex items-center gap-2 shrink-0">
-          {linkComplete && (
-            <StreakBadge
-              streak={status.claimStreak ?? 0}
-              onOpen={() => setShowStreakModal(true)}
-            />
-          )}
-          <button
-            onClick={handleLogout}
-            className="section-label-inverse hover:bg-white/10 transition-colors shrink-0"
-          >
-            {copy.dashboard.signOut}
-          </button>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="section-label-inverse hover:bg-white/10 transition-colors shrink-0"
+        >
+          {copy.dashboard.signOut}
+        </button>
       </header>
 
       <main className="flex-1 py-6 space-y-4">
@@ -207,6 +199,8 @@ export default function DashboardPage() {
               lifetimeGdClaimed={status.lifetimeGdClaimed ?? "0"}
               rootGdBalance={status.rootGdBalance ?? null}
               lastClaimedAt={status.lastClaimedAt}
+              streak={status.claimStreak ?? 0}
+              onStreakOpen={() => setShowStreakModal(true)}
             />
 
             <AddressesCard

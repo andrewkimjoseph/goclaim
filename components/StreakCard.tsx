@@ -3,35 +3,6 @@
 import { useEffect } from "react";
 import { copy } from "@/lib/copy";
 
-type StreakBadgeProps = {
-  streak: number;
-  onOpen: () => void;
-};
-
-export function StreakBadge({ streak, onOpen }: StreakBadgeProps) {
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-label={`${copy.dashboard.streakLabel}: ${streak}`}
-      className="inline-flex items-center gap-1.5 rounded-brutal px-1.5 py-1 hover:bg-white/10 transition-colors shrink-0"
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/flame.svg"
-        alt=""
-        width={28}
-        height={28}
-        className="shrink-0"
-        aria-hidden
-      />
-      <span className="font-display font-bold text-white text-lg leading-none tabular-nums">
-        {streak}
-      </span>
-    </button>
-  );
-}
-
 type StreakModalProps = {
   streak: number;
   open: boolean;
