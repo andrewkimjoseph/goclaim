@@ -120,11 +120,23 @@ const gdNumberFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 0,
 });
 
+const gdWholeNumberFormatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0,
+  minimumFractionDigits: 0,
+});
+
 export function formatGdAmount(amountWei: string): string {
   const formatted = formatUnits(BigInt(amountWei), 18);
   const truncated = truncateGdToTwoDecimals(formatted) || "0";
   const value = Number(truncated);
   return Number.isFinite(value) ? gdNumberFormatter.format(value) : truncated;
+}
+
+/** Truncate fractional G$ (floor at token whole units) for dashboard headline stats. */
+export function formatGdAmountWhole(amountWei: string): string {
+  const whole = BigInt(amountWei) / BigInt(10) ** BigInt(18);
+  const value = Number(whole);
+  return Number.isFinite(value) ? gdWholeNumberFormatter.format(value) : whole.toString();
 }
 
 export function formatEntitlementGd(entitlementWei: string): string {
