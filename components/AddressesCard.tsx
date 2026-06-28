@@ -49,7 +49,7 @@ export function AddressesCard({
         style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
       >
         <div className="overflow-hidden">
-          <div className="mt-3 pt-3 border-t-2 border-black space-y-4">
+          <div className="mt-3 pt-3 border-t-2 border-black space-y-4 pb-1">
             {rootAddress && (
               <div>
                 <p className="text-xs font-display font-semibold text-shell mb-3">
