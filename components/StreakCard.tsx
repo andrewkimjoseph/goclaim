@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { copy } from "@/lib/copy";
+
+const MODAL_EXIT_MS = 320;
 
 type StreakModalProps = {
   streak: number;
@@ -10,26 +12,51 @@ type StreakModalProps = {
 };
 
 export function StreakModal({ streak, open, onClose }: StreakModalProps) {
+  const [render, setRender] = useState(open);
+  const [closing, setClosing] = useState(false);
+
   useEffect(() => {
-    if (!open) return;
+    if (open) {
+      setRender(true);
+      setClosing(false);
+      return;
+    }
+
+    if (!render) return;
+
+    setClosing(true);
+    const timer = window.setTimeout(() => {
+      setRender(false);
+      setClosing(false);
+    }, MODAL_EXIT_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [open, render]);
+
+  useEffect(() => {
+    if (!render) return;
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prevOverflow;
     };
-  }, [open]);
+  }, [render]);
 
-  if (!open) return null;
+  if (!render) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-md overflow-hidden overscroll-none animate-modalFadeIn"
+      className={`fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-md overflow-hidden overscroll-none ${
+        closing ? "animate-modalFadeOut" : "animate-modalFadeIn"
+      }`}
       onClick={onClose}
       role="presentation"
     >
       <div
-        className="w-full max-w-[460px] px-4 pb-4 animate-modalSlideUp"
+        className={`w-full max-w-[460px] px-4 pb-4 ${
+          closing ? "animate-modalSlideDown" : "animate-modalSlideUp"
+        }`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-labelledby="streak-modal-title"
@@ -53,10 +80,13 @@ export function StreakModal({ streak, open, onClose }: StreakModalProps) {
               >
                 {copy.dashboard.streakLabel}
               </h2>
-              <p className="font-display font-extrabold text-3xl text-primary mt-1">
-                {streak}
-              </p>
-              <p className="text-sm text-foreground/60 mt-1">
+              <p
+                className={
+                  streak > 0
+                    ? "font-display font-extrabold text-3xl text-primary mt-1"
+                    : "text-sm text-foreground/60 mt-1"
+                }
+              >
                 {streak > 0
                   ? copy.dashboard.streakDays(streak)
                   : copy.dashboard.streakEmpty}
@@ -79,4 +109,4 @@ export function StreakModal({ streak, open, onClose }: StreakModalProps) {
       </div>
     </div>
   );
-}
+};

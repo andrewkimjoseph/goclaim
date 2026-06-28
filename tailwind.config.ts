@@ -38,10 +38,20 @@ const config: Config = {
           from: { transform: "translateY(100%)", opacity: "0" },
           to: { transform: "translateY(0)", opacity: "1" },
         },
+        modalFadeOut: {
+          from: { opacity: "1" },
+          to: { opacity: "0" },
+        },
+        modalSlideDown: {
+          from: { transform: "translateY(0)", opacity: "1" },
+          to: { transform: "translateY(100%)", opacity: "0" },
+        },
       },
       animation: {
         modalFadeIn: "modalFadeIn 220ms ease-out forwards",
         modalSlideUp: "modalSlideUp 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        modalFadeOut: "modalFadeOut 220ms ease-in forwards",
+        modalSlideDown: "modalSlideDown 320ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },
   },
