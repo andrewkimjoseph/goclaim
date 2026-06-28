@@ -100,7 +100,7 @@ export async function processClaim(data: ClaimJobData): Promise<void> {
         data: {
           userId,
           status: "success",
-          txHash: result.transactionHash,
+          txHash: result.userOpHash,
           waveIndex,
         },
       });
