@@ -25,7 +25,7 @@ export const copy = {
     ],
   },
   auth: {
-    connectWallet: "Connect GoodDollar wallet",
+    connectWallet: "Connect wallet",
     walletCardLabel: "Your Connected Wallet",
     walletCardHint: "Connect to begin",
     changeWallet: "Change wallet",
