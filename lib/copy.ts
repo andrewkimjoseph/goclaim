@@ -83,7 +83,7 @@ export const copy = {
     headlineActive: "You're all set",
     headlineSetup: "Welcome back",
     subheadActive: (claimSchedule: string) =>
-      `G$ is GoClaimed ${claimSchedule} and sent to your wallet.`,
+      `GoClaims run ${claimSchedule}.`,
     subheadSetup:
       "Link your smart account to GoodDollar to start GoClaiming.",
     loading: "Loading...",
@@ -146,7 +146,7 @@ export const copy = {
     pageSubtitle: "All your GoClaim runs",
   },
   time: {
-    claimScheduleUtc: "every day at 12:00 PM UTC",
+    claimScheduleUtc: "daily at 12:00 PM UTC",
     claimScheduleShort: "12:00 PM UTC daily",
   },
   faqs: {
@@ -222,7 +222,7 @@ export function formatClaimSchedule(): string {
       minute: "2-digit",
       timeZoneName: "short",
     });
-    return `${base} (${local} for you)`;
+    return `${base} (${local})`;
   } catch {
     return base;
   }
