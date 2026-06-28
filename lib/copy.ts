@@ -99,10 +99,9 @@ export const copy = {
     totalGGoClaimed: "Total G$ GoClaimed",
     rootGdBalance: "Current G$ balance",
     lastGoClaimed: "Last GoClaim",
+    addressesLabel: "Addresses",
     smartAccountLabel: "GoClaim Smart Account",
-    smartAccountHint:
-      "This GoClaim smart account claims for you automatically.",
-    walletLabel: "Your wallet (receives G$)",
+    walletLabel: "Your Wallet",
     finishSetupCta: "Finish setup",
     backToHome: "Back to home",
     signOut: "Sign out",
