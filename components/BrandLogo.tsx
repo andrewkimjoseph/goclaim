@@ -28,7 +28,7 @@ export function BrandLogo({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/watermelon.svg"
+      src="/logo.svg"
       alt={alt}
       width={px}
       height={px}
