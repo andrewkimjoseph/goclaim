@@ -86,9 +86,120 @@
   }
 }
 
+:root {
+  --page-duration-exit: 150ms;
+  --page-duration-enter: 200ms;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-slide-y-in {
+  from {
+    transform: translateY(8px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-slide-y-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes page-slide-x {
+  from {
+    transform: translateX(var(--slide-offset, 0));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+::view-transition-old(.page-default) {
+  animation:
+    var(--page-duration-exit) ease-out both page-fade-out,
+    var(--page-duration-exit) ease-out both page-slide-y-out;
+}
+
+::view-transition-new(.page-default) {
+  animation:
+    var(--page-duration-enter) ease-out var(--page-duration-exit) both page-fade-in,
+    var(--page-duration-enter) ease-out var(--page-duration-exit) both page-slide-y-in;
+}
+
+::view-transition-old(.page-forward) {
+  --slide-offset: -24px;
+  animation:
+    var(--page-duration-exit) ease-in both page-fade-out,
+    var(--page-duration-enter) ease-in-out both page-slide-x reverse;
+}
+
+::view-transition-new(.page-forward) {
+  --slide-offset: 24px;
+  animation:
+    var(--page-duration-enter) ease-out var(--page-duration-exit) both page-fade-in,
+    var(--page-duration-enter) ease-in-out both page-slide-x;
+}
+
+::view-transition-old(.page-back) {
+  --slide-offset: 24px;
+  animation:
+    var(--page-duration-exit) ease-in both page-fade-out,
+    var(--page-duration-enter) ease-in-out both page-slide-x reverse;
+}
+
+::view-transition-new(.page-back) {
+  --slide-offset: -24px;
+  animation:
+    var(--page-duration-enter) ease-out var(--page-duration-exit) both page-fade-in,
+    var(--page-duration-enter) ease-in-out both page-slide-x;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-modalFadeIn,
-  .animate-modalSlideUp {
+  .animate-modalSlideUp,
+  .animate-modalFadeOut,
+  .animate-modalSlideDown {
     animation: none;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
   }
 }

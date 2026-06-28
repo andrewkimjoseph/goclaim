@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    viewTransition: true,
+  },
   // porto (wagmi connector) .d.ts re-exports ../src/*.ts with invalid types for Next's tsc pass
   typescript: {
     ignoreBuildErrors: true,

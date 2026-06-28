@@ -41,12 +41,13 @@ export default function LandingPage() {
 
   return (
     <div className="app-shell pb-4 min-h-screen">
-      <header className="header-bar">
+      <header className="header-bar" style={{ viewTransitionName: "site-header" }}>
         <Link href="/">
           <BrandLogo size="nav" priority />
         </Link>
         <Link
           href="/faqs"
+          transitionTypes={["nav-forward"]}
           className="section-label-inverse hover:bg-white/10 transition-colors shrink-0"
         >
           {copy.faqs.headerButton}

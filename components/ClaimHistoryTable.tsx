@@ -122,6 +122,7 @@ export function ClaimHistoryTable({
       {showViewAll && (
         <Link
           href={viewAllHref}
+          transitionTypes={["nav-forward"]}
           className="btn-secondary text-sm mt-4 text-center py-2"
         >
           {copy.goClaimHistory.viewAllHistory}
