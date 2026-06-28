@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "GoClaim history | GoClaim",
+  title: "GoClaim History | GoClaim",
   description: "Full history of your GoClaim runs.",
 };
 
