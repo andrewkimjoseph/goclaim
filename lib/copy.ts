@@ -91,9 +91,9 @@ export const copy = {
     noAgent: "Your GoClaim smart account is not set up yet.",
     streakLabel: "GoClaim Streak",
     streakDays: (n: number) => (n === 1 ? "1 day" : `${n} days`),
-    streakEmpty: "GoClaim daily to build your streak.",
+    streakEmpty: "Your streak starts once your first GoClaim goes through.",
     streakDescription:
-      "Your streak counts consecutive days you've successfully GoClaimed. GoClaim runs automatically each day — keep it going to build your streak. If you miss a day, it resets to zero.",
+      "GoClaim runs automatically every day and claims your G$ for you. Your streak counts the consecutive days a GoClaim succeeds. If a day's GoClaim fails, the streak resets to zero.",
     streakClose: "Got it",
     totalGoClaims: "Total GoClaims",
     totalGGoClaimed: "Total G$ GoClaimed",
