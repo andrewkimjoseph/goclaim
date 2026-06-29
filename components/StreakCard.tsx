@@ -68,9 +68,9 @@ export function StreakModal({ streak, open, onClose }: StreakModalProps) {
             <img
               src="/flame.svg"
               alt=""
-              width={48}
-              height={48}
-              className="shrink-0"
+              width={72}
+              height={72}
+              className="shrink-0 h-[72px] w-[72px]"
               aria-hidden
             />
             <div>
