@@ -11,6 +11,7 @@ import { AddressesCard } from "@/components/AddressesCard";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { SetupChecklist } from "@/components/SetupChecklist";
 import { StreakModal } from "@/components/StreakCard";
+import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { useAgentStatus, UnauthorizedError } from "@/lib/hooks/useAgentStatus";
 import { copy, formatClaimSchedule } from "@/lib/copy";
@@ -19,6 +20,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showStreakModal, setShowStreakModal] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const autoOnboardingShown = useRef(false);
   const [claimSchedule] = useState(() => formatClaimSchedule());
 
@@ -49,9 +52,14 @@ export default function DashboardPage() {
 
   const showOnboardingModal = showOnboarding && !linkComplete;
 
-  async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
-    router.push("/");
+  async function confirmSignOut() {
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      router.push("/");
+    } finally {
+      setSigningOut(false);
+    }
   }
 
   const linkStatus = status?.linkStatus ?? "pending";
@@ -164,7 +172,10 @@ export default function DashboardPage() {
       </main>
 
       <footer className="pt-4">
-        <button onClick={handleLogout} className="btn-hero-tertiary">
+        <button
+          onClick={() => setShowSignOutModal(true)}
+          className="btn-hero-tertiary"
+        >
           {copy.dashboard.signOut}
         </button>
       </footer>
@@ -186,6 +197,13 @@ export default function DashboardPage() {
           onClose={() => setShowStreakModal(false)}
         />
       )}
+
+      <SignOutConfirmModal
+        open={showSignOutModal}
+        onClose={() => setShowSignOutModal(false)}
+        onConfirm={confirmSignOut}
+        confirming={signingOut}
+      />
     </div>
   );
 }

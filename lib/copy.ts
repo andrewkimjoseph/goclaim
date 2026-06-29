@@ -106,6 +106,12 @@ export const copy = {
     backToHome: "Back to home",
     retry: "Retry",
     signOut: "Sign out",
+    signOutConfirmTitle: "Sign out?",
+    signOutConfirmBody:
+      "You'll need to connect your wallet again to return to GoClaim.",
+    signOutConfirmCta: "Sign out",
+    signOutCancel: "Cancel",
+    signOutConfirming: "Signing out...",
   },
   setupChecklist: {
     title: "Finish setup",
