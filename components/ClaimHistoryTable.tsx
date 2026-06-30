@@ -36,13 +36,16 @@ export function ClaimHistoryTable({
   const [claimSchedule] = useState(() => formatClaimSchedule());
   const visibleLogs = limit !== undefined ? logs.slice(0, limit) : logs;
   const showViewAll = viewAllHref !== undefined && logs.length > 1;
+  const showTitle = limit !== undefined || viewAllHref !== undefined;
 
   if (logs.length === 0) {
     return (
       <div className="card">
-        <h3 className="font-display font-bold text-lg mb-2">
-          {copy.goClaimHistory.title}
-        </h3>
+        {showTitle && (
+          <h3 className="font-display font-bold text-lg mb-2">
+            {copy.goClaimHistory.title}
+          </h3>
+        )}
         <p className="text-center text-foreground/60 text-sm">
           {copy.goClaimHistory.empty(claimSchedule)}
         </p>
@@ -57,9 +60,11 @@ export function ClaimHistoryTable({
 
   return (
     <div className="card flex flex-col">
-      <h3 className="font-display font-bold text-lg mb-3 shrink-0">
-        {copy.goClaimHistory.title}
-      </h3>
+      {showTitle && (
+        <h3 className="font-display font-bold text-lg mb-3 shrink-0">
+          {copy.goClaimHistory.title}
+        </h3>
+      )}
       <div className={scrollClass}>
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-white">
