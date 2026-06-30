@@ -145,10 +145,11 @@ export const copy = {
     status: "Status",
     amount: "G$ sent",
     receipt: "Receipt",
-    viewOnCeloscan: "View on Celoscan",
+    view: "View",
     viewAllHistory: "View all GoClaims",
     backToDashboard: "Dashboard",
-    pageSubtitle: "All your GoClaim runs",
+    pageSummary: (count: number, totalGd: string) =>
+      `${count} GoClaims · ${totalGd} G$ sent`,
   },
   time: {
     claimScheduleUtc: "daily at 12:00 PM UTC",
