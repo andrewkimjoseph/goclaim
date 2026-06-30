@@ -41,7 +41,14 @@ export default function HistoryPage() {
           <h1 className="font-display font-extrabold text-3xl text-white tracking-tight">
             {copy.goClaimHistory.title}
           </h1>
-          <p className="text-sm text-white/80">{copy.goClaimHistory.pageSubtitle}</p>
+          {status?.hasAgent && !isLoading && (
+            <p className="text-sm text-white/80">
+              {copy.goClaimHistory.pageSummary(
+                status.lifetimeClaims ?? 0,
+                status.lifetimeGdClaimed ?? "0"
+              )}
+            </p>
+          )}
         </div>
 
         {isLoading && !status ? (
