@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { formatClaimStatus } from "@/lib/formatClaimStatus";
 import { copy, formatClaimSchedule } from "@/lib/copy";
 
@@ -28,15 +28,95 @@ function statusClass(status: string) {
   return "status-pending";
 }
 
+function formatClaimDate(claimedAt: string) {
+  return new Date(claimedAt).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function ClaimHistoryCell({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <td className={`py-3.5 pr-4 align-middle ${className}`}>{children}</td>
+  );
+}
+
+function ClaimHistoryPreviewTable({ logs }: { logs: ClaimLog[] }) {
+  return (
+    <table className="w-full text-sm">
+      <thead className="sticky top-0 bg-white">
+        <tr className="text-left text-foreground/60 border-b-2 border-black">
+          <th className="pb-3 pr-4">{copy.goClaimHistory.date}</th>
+          <th className="pb-3 pr-4">{copy.goClaimHistory.status}</th>
+          <th className="pb-3 pr-4">{copy.goClaimHistory.amount}</th>
+          <th className="pb-3">{copy.goClaimHistory.receipt}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {logs.map((log) => {
+          const display = formatClaimStatus(log.status, log.errorMsg);
+          return (
+            <tr
+              key={log.id}
+              className="border-b border-black/10 last:border-0"
+            >
+              <ClaimHistoryCell className="whitespace-nowrap">
+                {formatClaimDate(log.claimedAt)}
+              </ClaimHistoryCell>
+              <ClaimHistoryCell>
+                <span className={statusClass(log.status)} title={display.detail}>
+                  {display.label}
+                </span>
+              </ClaimHistoryCell>
+              <ClaimHistoryCell className="max-w-[7rem] truncate">
+                {log.transfer?.amountGd ?? "—"}
+              </ClaimHistoryCell>
+              <ClaimHistoryCell className="pr-0">
+                {log.txHash ? (
+                  <a
+                    href={`https://celoscan.io/tx/${log.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {copy.goClaimHistory.view}
+                  </a>
+                ) : (
+                  <span className="text-foreground/40">
+                    {display.detail ?? "—"}
+                  </span>
+                )}
+              </ClaimHistoryCell>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
 export function ClaimHistoryTable({
   logs,
   limit,
   viewAllHref,
 }: ClaimHistoryTableProps) {
   const [claimSchedule] = useState(() => formatClaimSchedule());
+  const isPreview = limit !== undefined || viewAllHref !== undefined;
   const visibleLogs = limit !== undefined ? logs.slice(0, limit) : logs;
   const showViewAll = viewAllHref !== undefined && logs.length > 1;
-  const showTitle = limit !== undefined || viewAllHref !== undefined;
+  const showTitle = isPreview;
+  const needsScrollCap = isPreview && visibleLogs.length > 1;
+  const scrollClass = needsScrollCap
+    ? "overflow-x-auto overflow-y-auto max-h-[min(12rem,35vh)] min-h-0"
+    : "overflow-x-auto";
 
   if (logs.length === 0) {
     return (
@@ -53,79 +133,31 @@ export function ClaimHistoryTable({
     );
   }
 
-  const scrollClass =
-    limit === undefined
-      ? "overflow-x-auto overflow-y-auto max-h-[min(12rem,35vh)] min-h-0"
-      : "overflow-x-auto";
-
   return (
-    <div className="card flex flex-col">
+    <div
+      className={
+        isPreview
+          ? "card flex flex-col"
+          : "card overflow-x-auto !pb-0"
+      }
+    >
       {showTitle && (
         <h3 className="font-display font-bold text-lg mb-3 shrink-0">
           {copy.goClaimHistory.title}
         </h3>
       )}
-      <div className={scrollClass}>
-        <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-white">
-            <tr className="text-left text-foreground/60 border-b-2 border-black">
-              <th className="pb-2 pr-4">{copy.goClaimHistory.date}</th>
-              <th className="pb-2 pr-4">{copy.goClaimHistory.status}</th>
-              <th className="pb-2 pr-4">{copy.goClaimHistory.amount}</th>
-              <th className="pb-2">{copy.goClaimHistory.receipt}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleLogs.map((log) => {
-              const display = formatClaimStatus(log.status, log.errorMsg);
-              return (
-                <tr
-                  key={log.id}
-                  className="border-b border-black/10 last:border-0"
-                >
-                  <td className="py-2 pr-4 whitespace-nowrap">
-                    {new Date(log.claimedAt).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </td>
-                  <td className="py-2 pr-4">
-                    <span className={statusClass(log.status)} title={display.detail}>
-                      {display.label}
-                    </span>
-                  </td>
-                  <td className="py-2 pr-4 max-w-[7rem] truncate">
-                    {log.transfer?.amountGd ?? "—"}
-                  </td>
-                  <td className="py-2">
-                    {log.txHash ? (
-                      <a
-                        href={`https://celoscan.io/tx/${log.txHash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline text-xs"
-                      >
-                        {copy.goClaimHistory.viewOnCeloscan}
-                      </a>
-                    ) : (
-                      <span className="text-foreground/40 text-xs">
-                        {display.detail ?? "—"}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {isPreview ? (
+        <div className={scrollClass}>
+          <ClaimHistoryPreviewTable logs={visibleLogs} />
+        </div>
+      ) : (
+        <ClaimHistoryPreviewTable logs={visibleLogs} />
+      )}
       {showViewAll && (
         <Link
           href={viewAllHref}
           transitionTypes={["nav-forward"]}
-          className="btn-secondary text-sm mt-4 text-center py-2"
+          className="btn-secondary text-sm mt-1 text-center py-2"
         >
           {copy.goClaimHistory.viewAllHistory}
         </Link>
