@@ -48,7 +48,7 @@ function WalletStatusCard({
   const addressClass = isHero ? "text-black" : "text-foreground";
 
   return (
-    <div className={`${cardClass} min-w-0 overflow-hidden`}>
+    <div className={`${cardClass} min-w-0 overflow-hidden flex flex-col gap-3`}>
       <div className="flex items-start justify-between gap-2 min-w-0">
         <p
           className={`min-w-0 flex-1 text-xs font-display font-semibold uppercase tracking-wider ${
@@ -61,21 +61,21 @@ function WalletStatusCard({
       </div>
 
       {verificationStatus === "loading" && (
-        <p className={`text-xs ${hintClass} flex items-center gap-2 mt-2`}>
+        <p className={`text-xs ${hintClass} flex items-center gap-2`}>
           <InlineSpinner className={isHero ? "border-black/30 border-t-black" : "border-foreground/30 border-t-foreground"} />
           {copy.auth.checkingVerification}
         </p>
       )}
 
       <p
-        className={`font-display font-bold text-lg mt-1 truncate min-w-0 ${addressClass}`}
+        className={`font-display font-bold text-lg truncate min-w-0 ${addressClass}`}
         title={displayAddress}
       >
         {displayAddress ? truncateAddress(displayAddress) : accountName}
       </p>
 
       {verificationStatus === "isLinkedWallet" && (
-        <p className={`text-xs mt-2 ${isHero ? "text-red-700" : "text-red-600"}`}>
+        <p className={`text-xs ${isHero ? "text-red-700" : "text-red-600"}`}>
           {copy.auth.linkedWalletHint}
         </p>
       )}
@@ -214,21 +214,12 @@ export function ConnectSignIn({
               })}
             >
               {!connected ? (
-                <>
-                  {isHero && (
-                    <div className="card-paper mb-3 text-center">
-                      <p className="text-xs font-display font-semibold uppercase tracking-wider text-black/50">
-                        {copy.auth.walletCardLabel}
-                      </p>
-                      <p className="font-display font-bold text-lg mt-1 text-black">
-                        {copy.auth.walletCardHint}
-                      </p>
-                    </div>
-                  )}
-                  <button onClick={openConnectModal} className={primaryBtn}>
-                    {label}
-                  </button>
-                </>
+                <button
+                  onClick={openConnectModal}
+                  className={isHero ? "btn-primary" : primaryBtn}
+                >
+                  {label}
+                </button>
               ) : chain.unsupported ? (
                 <button onClick={openChainModal} className={secondaryBtn}>
                   {copy.auth.wrongNetwork}

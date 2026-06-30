@@ -68,10 +68,6 @@ export default function LandingPage() {
         <div className="w-full pb-2">
           <ConnectSignIn onSuccess={handleSuccess} variant="hero" />
         </div>
-
-        <p className="text-center text-white/50 text-xs mt-4 px-2 pb-2">
-          {copy.landing.footer}
-        </p>
       </main>
     </div>
   );

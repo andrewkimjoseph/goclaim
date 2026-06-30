@@ -4,7 +4,6 @@ export const copy = {
     headline: "Your UBI, on autopilot.",
     subhead:
       "GoClaim creates a smart account that GoClaims GoodDollar for you every day and sends G$ straight to your wallet.",
-    footer: "GoClaim — built on Celo + GoodDollar",
     howItWorks: "How it works",
     steps: [
       {
@@ -27,7 +26,6 @@ export const copy = {
   auth: {
     connectWallet: "Connect wallet",
     walletCardLabel: "Your Connected Wallet",
-    walletCardHint: "Connect to begin",
     changeWallet: "Change wallet",
     signIn: "Sign in",
     signingIn: "Signing in...",
