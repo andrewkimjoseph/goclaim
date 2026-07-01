@@ -6,10 +6,13 @@ import { useCallback, useEffect, useState } from "react";
 import { celo } from "wagmi/chains";
 import { friendlySignInError } from "@/lib/friendlyTxError";
 
+export type SignInPhase = "idle" | "awaiting_signature" | "verifying";
+
 export function useSiweAuth() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const [isLoading, setIsLoading] = useState(false);
+  const [phase, setPhase] = useState<SignInPhase>("idle");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,6 +26,7 @@ export function useSiweAuth() {
     }
 
     setIsLoading(true);
+    setPhase("awaiting_signature");
     setError(null);
 
     try {
@@ -50,6 +54,7 @@ export function useSiweAuth() {
       });
 
       const signature = await signMessageAsync({ message });
+      setPhase("verifying");
 
       const verifyRes = await fetch("/api/auth/verify", {
         method: "POST",
@@ -69,8 +74,9 @@ export function useSiweAuth() {
       return false;
     } finally {
       setIsLoading(false);
+      setPhase("idle");
     }
   }, [address, signMessageAsync]);
 
-  return { signIn, isLoading, error, isConnected, address };
+  return { signIn, isLoading, phase, error, isConnected, address };
 }

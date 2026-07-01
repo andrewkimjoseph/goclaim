@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { type Address } from "viem";
 import { ConnectAgentButton } from "@/components/ConnectAgentButton";
+import { celebrateSmartAccountLink } from "@/lib/celebrateLink";
 import { copy } from "@/lib/copy";
 
 type OnboardingModalProps = {
@@ -33,20 +34,21 @@ export function OnboardingModal({
 
   function handleConnected() {
     setConnectedLocally(true);
+    void celebrateSmartAccountLink();
     onConnected?.();
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 backdrop-blur-md overflow-hidden overscroll-none animate-modalFadeIn">
       <div
-        className="w-full max-w-[460px] px-4 pb-4 animate-modalSlideUp"
+        className="w-full max-w-[460px] min-w-0 px-4 pb-4 animate-modalSlideUp overflow-x-hidden"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-labelledby="onboarding-modal-title"
         aria-modal="true"
       >
-        <div className="card w-full max-h-[min(90dvh,90vh)] flex flex-col">
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+        <div className="card w-full min-w-0 max-w-full max-h-[min(90dvh,90vh)] flex flex-col overflow-x-hidden">
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-x-none overscroll-contain">
             <h2
               id="onboarding-modal-title"
               className="font-display font-extrabold text-xl mb-4 text-foreground"
@@ -115,7 +117,7 @@ export function OnboardingModal({
             </ol>
           </div>
 
-          <button onClick={onClose} className="btn-secondary shrink-0 mt-4">
+          <button onClick={onClose} className="btn-secondary shrink-0 mt-4 max-w-full">
             {copy.onboarding.goToDashboard}
           </button>
         </div>

@@ -80,10 +80,10 @@ export const copy = {
     headlineSetup: "Welcome back",
     subheadActive: (claimSchedule: string) =>
       `GoClaims run ${claimSchedule}.`,
-    subheadSetup:
-      "Link your smart account to GoodDollar to start GoClaiming.",
+    subheadSetup: "Link to GoodDollar to start GoClaiming.",
     loading: "Loading...",
     setupGoClaim: "Set up GoClaim",
+    settingUpGoClaim: "Setting up...",
     noAgent: "Your GoClaim smart account is not set up yet.",
     streakLabel: "GoClaim Streak",
     streakDays: (n: number) => (n === 1 ? "1 day" : `${n} days`),
@@ -123,7 +123,7 @@ export const copy = {
     },
     pending: {
       label: "Setup incomplete",
-      description: "Link your smart account to GoodDollar to start GoClaiming.",
+      description: "Link to GoodDollar to start GoClaiming.",
     },
     linked_other: {
       label: "Wrong wallet linked",

@@ -31,6 +31,7 @@ export default function DashboardPage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showStreakModal, setShowStreakModal] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [isCreatingAgent, setIsCreatingAgent] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const autoOnboardingShown = useRef(false);
   const [claimSchedule] = useState(() => formatClaimSchedule());
@@ -40,8 +41,8 @@ export default function DashboardPage() {
     enabled: checked && authenticated,
   });
 
-  const fetchStatus = useCallback(() => {
-    void refetch();
+  const fetchStatus = useCallback(async () => {
+    return refetch();
   }, [refetch]);
 
   useEffect(() => {
@@ -85,6 +86,28 @@ export default function DashboardPage() {
     }
   }
 
+  async function handleSetupGoClaim() {
+    setIsCreatingAgent(true);
+    try {
+      await fetch("/api/agent/create", {
+        method: "POST",
+        credentials: "include",
+      });
+      const { data: refreshedStatus } = await fetchStatus();
+      const refreshedSimpleSmartAccount =
+        refreshedStatus?.simpleSmartAccountAddress ??
+        refreshedStatus?.smartAccountAddress;
+      const refreshedLinkComplete = refreshedStatus?.linkComplete ?? false;
+
+      if (refreshedSimpleSmartAccount && !refreshedLinkComplete) {
+        autoOnboardingShown.current = true;
+        setShowOnboarding(true);
+      }
+    } finally {
+      setIsCreatingAgent(false);
+    }
+  }
+
   const linkStatus = status?.linkStatus ?? "pending";
   const showError = Boolean(error) && !(error instanceof UnauthorizedError);
 
@@ -122,16 +145,13 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-4 w-full">
             <p className="text-white/80 text-center">{copy.dashboard.noAgent}</p>
             <button
-              onClick={async () => {
-                await fetch("/api/agent/create", {
-                  method: "POST",
-                  credentials: "include",
-                });
-                fetchStatus();
-              }}
+              onClick={handleSetupGoClaim}
+              disabled={isCreatingAgent}
               className="btn-primary"
             >
-              {copy.dashboard.setupGoClaim}
+              {isCreatingAgent
+                ? copy.dashboard.settingUpGoClaim
+                : copy.dashboard.setupGoClaim}
             </button>
           </div>
         ) : (

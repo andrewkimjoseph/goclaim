@@ -117,7 +117,7 @@ export function ConnectAgentButton({
   const isBusy = isPending || isConfirming;
 
   return (
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2">
       <button
         type="button"
         onClick={handleConnect}

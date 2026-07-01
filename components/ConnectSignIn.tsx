@@ -89,10 +89,11 @@ export function ConnectSignIn({
   variant = "default",
 }: ConnectSignInProps) {
   const router = useRouter();
-  const { signIn, isLoading, error, isConnected, address } = useSiweAuth();
+  const { signIn, isLoading, phase, error, isConnected, address } = useSiweAuth();
   const { authenticated, rootAddress, checked, refresh } = useSession();
   const { address: walletAddress } = useAccount();
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
+  const [isFinalizingSignIn, setIsFinalizingSignIn] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(null);
 
   const displayAddress = walletAddress ?? address;
@@ -107,6 +108,7 @@ export function ConnectSignIn({
   useEffect(() => {
     setVerificationError(null);
     setIsGeneratingLink(false);
+    setIsFinalizingSignIn(false);
   }, [walletAddress]);
 
   const walletMatchesSession =
@@ -251,17 +253,26 @@ export function ConnectSignIn({
 
                   {canSignIn && (
                     <button
-                      disabled={isLoading}
+                      disabled={isLoading || isFinalizingSignIn}
                       onClick={async () => {
                         const ok = await signIn();
                         if (ok) {
-                          await refresh();
-                          if (onSuccess) onSuccess();
+                          setIsFinalizingSignIn(true);
+                          try {
+                            await refresh();
+                            if (onSuccess) onSuccess();
+                          } finally {
+                            setIsFinalizingSignIn(false);
+                          }
                         }
                       }}
                       className={`${primaryBtn} disabled:opacity-50`}
                     >
-                      {isLoading ? copy.auth.signingIn : copy.auth.signIn}
+                      {phase === "awaiting_signature"
+                        ? copy.connect.confirmInWallet
+                        : phase === "verifying" || isFinalizingSignIn
+                          ? copy.auth.signingIn
+                          : copy.auth.signIn}
                     </button>
                   )}
 
