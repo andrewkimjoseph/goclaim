@@ -13,8 +13,18 @@ import { SetupChecklist } from "@/components/SetupChecklist";
 import { StreakModal } from "@/components/StreakCard";
 import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useAgentStatus, UnauthorizedError } from "@/lib/hooks/useAgentStatus";
+import { useSession } from "@/lib/hooks/useSession";
 import { copy, formatClaimSchedule } from "@/lib/copy";
+
+const SIGN_OUT_MIN_MS = 500;
+
+function signOutMinDelay() {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, SIGN_OUT_MIN_MS);
+  });
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -25,11 +35,20 @@ export default function DashboardPage() {
   const autoOnboardingShown = useRef(false);
   const [claimSchedule] = useState(() => formatClaimSchedule());
 
-  const { data: status, isLoading, error, refetch } = useAgentStatus(2);
+  const { authenticated, checked, clearSession } = useSession();
+  const { data: status, isLoading, error, refetch } = useAgentStatus(2, {
+    enabled: checked && authenticated,
+  });
 
   const fetchStatus = useCallback(() => {
     void refetch();
   }, [refetch]);
+
+  useEffect(() => {
+    if (checked && !authenticated) {
+      router.push("/");
+    }
+  }, [checked, authenticated, router]);
 
   useEffect(() => {
     if (error instanceof UnauthorizedError) {
@@ -55,9 +74,13 @@ export default function DashboardPage() {
   async function confirmSignOut() {
     setSigningOut(true);
     try {
-      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      await Promise.all([
+        fetch("/api/auth/logout", { method: "POST", credentials: "include" }),
+        signOutMinDelay(),
+      ]);
+      clearSession();
       router.push("/");
-    } finally {
+    } catch {
       setSigningOut(false);
     }
   }
@@ -66,8 +89,11 @@ export default function DashboardPage() {
   const showError = Boolean(error) && !(error instanceof UnauthorizedError);
 
   return (
-    <div className="app-shell pb-6">
-      <header className="header-bar" style={{ viewTransitionName: "site-header" }}>
+    <div className="app-shell app-shell-pinned">
+      <header
+        className="header-bar shrink-0"
+        style={{ viewTransitionName: "site-header" }}
+      >
         <Link href="/">
           <BrandLogo size="nav" />
         </Link>
@@ -80,7 +106,7 @@ export default function DashboardPage() {
         </Link>
       </header>
 
-      <main className="flex-1 py-6 space-y-4">
+      <main className="app-shell-scroll py-6 space-y-4">
         {isLoading && !status ? (
           <DashboardSkeleton />
         ) : showError ? (
@@ -93,7 +119,7 @@ export default function DashboardPage() {
             </button>
           </div>
         ) : !status?.hasAgent ? (
-          <div className="flex flex-col items-center justify-center gap-4 py-12">
+          <div className="flex flex-col gap-4 w-full">
             <p className="text-white/80 text-center">{copy.dashboard.noAgent}</p>
             <button
               onClick={async () => {
@@ -103,7 +129,7 @@ export default function DashboardPage() {
                 });
                 fetchStatus();
               }}
-              className="btn-hero-primary"
+              className="btn-primary"
             >
               {copy.dashboard.setupGoClaim}
             </button>
@@ -171,7 +197,7 @@ export default function DashboardPage() {
         )}
       </main>
 
-      <footer>
+      <footer className="app-shell-footer">
         <button
           onClick={() => setShowSignOutModal(true)}
           className="btn-hero-tertiary"
@@ -199,11 +225,17 @@ export default function DashboardPage() {
       )}
 
       <SignOutConfirmModal
-        open={showSignOutModal}
+        open={showSignOutModal && !signingOut}
         onClose={() => setShowSignOutModal(false)}
         onConfirm={confirmSignOut}
         confirming={signingOut}
       />
+
+      {signingOut && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-shell">
+          <LoadingSpinner label={copy.dashboard.signOutConfirming} />
+        </div>
+      )}
     </div>
   );
 }
