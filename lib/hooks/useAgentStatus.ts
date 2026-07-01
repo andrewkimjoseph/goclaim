@@ -51,10 +51,14 @@ async function fetchAgentStatus(
   return (await res.json()) as AgentStatus;
 }
 
-export function useAgentStatus(claimLogsLimit?: number) {
+export function useAgentStatus(
+  claimLogsLimit?: number,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ["agent-status", claimLogsLimit ?? null],
     queryFn: () => fetchAgentStatus(claimLogsLimit),
+    enabled: options?.enabled ?? true,
     retry: (failureCount, error) => {
       if (error instanceof UnauthorizedError) return false;
       return failureCount < 2;
