@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (checked && !authenticated) {
-      router.push("/");
+      router.replace("/");
     }
   }, [checked, authenticated, router]);
 
@@ -110,6 +110,8 @@ export default function DashboardPage() {
 
   const linkStatus = status?.linkStatus ?? "pending";
   const showError = Boolean(error) && !(error instanceof UnauthorizedError);
+
+  if (checked && !authenticated) return null;
 
   return (
     <div className="app-shell app-shell-pinned">

@@ -99,7 +99,7 @@ export const copy = {
     smartAccountLabel: "GoClaim Smart Account",
     walletLabel: "Your Wallet",
     finishSetupCta: "Finish setup",
-    backToHome: "Back to home",
+    backToHome: "Home",
     retry: "Retry",
     signOut: "Sign out",
     signOutConfirmTitle: "Sign out?",
