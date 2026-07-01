@@ -13,6 +13,18 @@
     @apply max-w-[460px] mx-auto w-full min-h-screen flex flex-col px-4 bg-shell;
   }
 
+  .app-shell-pinned {
+    @apply h-dvh max-h-dvh overflow-hidden;
+  }
+
+  .app-shell-scroll {
+    @apply flex-1 min-h-0 overflow-y-auto overscroll-contain;
+  }
+
+  .app-shell-footer {
+    @apply shrink-0 bg-shell pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))];
+  }
+
   .header-bar {
     @apply py-4 flex items-center justify-between border-b-2 border-accent;
   }
