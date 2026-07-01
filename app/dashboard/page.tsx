@@ -6,7 +6,7 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
 import { GettingStartedHero } from "@/components/GettingStartedHero";
 import { SetupPreviewSteps } from "@/components/SetupPreviewSteps";
-import { AgentStatusCard } from "@/components/AgentStatusCard";
+import { GoClaimStatusCard } from "@/components/GoClaimStatusCard";
 import { ClaimHistoryTable } from "@/components/ClaimHistoryTable";
 import { DashboardOverviewCard } from "@/components/DashboardOverviewCard";
 import { AddressesCard } from "@/components/AddressesCard";
@@ -15,7 +15,7 @@ import { SetupChecklist } from "@/components/SetupChecklist";
 import { StreakModal } from "@/components/StreakCard";
 import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { useAgentStatus, UnauthorizedError } from "@/lib/hooks/useAgentStatus";
+import { useGoClaimStatus, UnauthorizedError } from "@/lib/hooks/useGoClaimStatus";
 import { useSession } from "@/lib/hooks/useSession";
 import { copy, formatClaimSchedule } from "@/lib/copy";
 
@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const [claimSchedule] = useState(() => formatClaimSchedule());
 
   const { authenticated, checked, clearSession, refresh } = useSession();
-  const { data: status, isLoading, error, refetch } = useAgentStatus(2, {
+  const { data: status, isLoading, error, refetch } = useGoClaimStatus(2, {
     enabled: checked && authenticated,
   });
 
@@ -90,7 +90,7 @@ export default function DashboardPage() {
   async function handleSetupGoClaim() {
     setIsCreatingAgent(true);
     try {
-      await fetch("/api/agent/create", {
+      await fetch("/api/goclaim/create", {
         method: "POST",
         credentials: "include",
       });
@@ -207,7 +207,7 @@ export default function DashboardPage() {
               />
             )}
 
-            <AgentStatusCard
+            <GoClaimStatusCard
               status={
                 linkStatus === "active"
                   ? "active"

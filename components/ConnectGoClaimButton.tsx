@@ -12,7 +12,7 @@ import {
 import { friendlyConnectError } from "@/lib/friendlyTxError";
 import { copy } from "@/lib/copy";
 
-type ConnectAgentButtonProps = {
+type ConnectGoClaimButtonProps = {
   smartAccountAddress: Address;
   rootAddress?: Address;
   onConnected?: () => void;
@@ -20,13 +20,13 @@ type ConnectAgentButtonProps = {
   label?: string;
 };
 
-export function ConnectAgentButton({
+export function ConnectGoClaimButton({
   smartAccountAddress,
   rootAddress,
   onConnected,
   className = "btn-primary",
   label = copy.connect.cta,
-}: ConnectAgentButtonProps) {
+}: ConnectGoClaimButtonProps) {
   const { address, isConnected } = useAccount();
 
   const { data: connectedTo, refetch: refetchConnected } = useReadContract({
@@ -63,7 +63,7 @@ export function ConnectAgentButton({
 
   async function logConnectAccount(txHash: string) {
     try {
-      const res = await fetch("/api/agent/connect-log", {
+      const res = await fetch("/api/goclaim/connect-log", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

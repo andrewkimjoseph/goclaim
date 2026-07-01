@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { ClaimLog } from "@/components/ClaimHistoryTable";
 
-export type AgentStatus = {
+export type GoClaimStatus = {
   hasAgent: boolean;
   rootAddress?: string;
   simpleSmartAccountAddress?: string;
@@ -27,9 +27,9 @@ export class UnauthorizedError extends Error {
   }
 }
 
-async function fetchAgentStatus(
+async function fetchGoClaimStatus(
   claimLogsLimit?: number
-): Promise<AgentStatus> {
+): Promise<GoClaimStatus> {
   const params = new URLSearchParams();
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   if (tz) params.set("timezone", tz);
@@ -37,7 +37,7 @@ async function fetchAgentStatus(
     params.set("claimLogsLimit", String(claimLogsLimit));
   }
 
-  const res = await fetch(`/api/agent/status?${params.toString()}`, {
+  const res = await fetch(`/api/goclaim/status?${params.toString()}`, {
     credentials: "include",
   });
 
@@ -48,16 +48,16 @@ async function fetchAgentStatus(
     throw new Error("Failed to load status");
   }
 
-  return (await res.json()) as AgentStatus;
+  return (await res.json()) as GoClaimStatus;
 }
 
-export function useAgentStatus(
+export function useGoClaimStatus(
   claimLogsLimit?: number,
   options?: { enabled?: boolean }
 ) {
   return useQuery({
-    queryKey: ["agent-status", claimLogsLimit ?? null],
-    queryFn: () => fetchAgentStatus(claimLogsLimit),
+    queryKey: ["goclaim-status", claimLogsLimit ?? null],
+    queryFn: () => fetchGoClaimStatus(claimLogsLimit),
     enabled: options?.enabled ?? true,
     retry: (failureCount, error) => {
       if (error instanceof UnauthorizedError) return false;

@@ -59,9 +59,9 @@ flowchart TB
 1. **Connect GoodDollar-verified root wallet** — client checks `getWhitelistedRoot` via `lib/hooks/useWalletVerification.ts`; unverified users are sent to GoodDollar face verification.
 2. **SIWE sign-in** — JWT session cookie via `app/api/auth/nonce` and `app/api/auth/verify`; server enforces whitelisted root via `lib/requireWhitelistedRoot.ts`.
 3. **Smart account created** — random EOA + ERC-4337 simple account (EntryPoint v0.7); private key AES-256-GCM encrypted at rest (`lib/onchain/createAgent.ts`, `lib/crypto.ts`).
-4. **One-time link** — user signs GoodDollar identity `connect` from their root wallet (`components/ConnectAgentButton.tsx`, `lib/onchain/connectAgent.ts`).
+4. **One-time link** — user signs GoodDollar identity `connect` from their root wallet (`components/ConnectGoClaimButton.tsx`, `lib/onchain/connectAgent.ts`).
 5. **Daily claims** — cron enqueues all active agents; worker claims UBI and transfers G$ to root in one UserOp (`lib/onchain/claimUbi.ts`: `UBIScheme.claim` + `G$.transfer`).
-6. **Dashboard** — status, claim history, and transfer amounts from `ClaimLog` + `TransferLog` (`app/api/agent/status/route.ts`).
+6. **Dashboard** — status, claim history, and transfer amounts from `ClaimLog` + `TransferLog` (`app/api/goclaim/status/route.ts`).
 
 ## Daily claim pipeline
 
@@ -107,8 +107,9 @@ See `prisma/schema.prisma` for the full schema.
 | `POST /api/auth/verify` | — | Verify SIWE signature, set session |
 | `GET /api/auth/session` | cookie | Current session (`200` + `authenticated: false` when logged out) |
 | `POST /api/auth/logout` | cookie | Clear session |
-| `POST /api/agent/create` | JWT | Create or return smart account |
-| `GET /api/agent/status` | JWT | Dashboard state + claim history |
+| `POST /api/goclaim/create` | JWT | Create or return smart account |
+| `GET /api/goclaim/status` | JWT | Dashboard state + claim history |
+| `POST /api/goclaim/connect-log` | JWT | Log GoodDollar connectAccount tx |
 | `POST /api/internal/trigger-claims` | `CRON_SECRET` | Enqueue daily claim jobs |
 
 ## On-chain integration

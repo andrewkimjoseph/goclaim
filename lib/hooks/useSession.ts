@@ -49,8 +49,8 @@ export function useSession() {
 
   const clearSession = useCallback(() => {
     queryClient.setQueryData<SessionData>(SESSION_QUERY_KEY, loggedOutSession);
-    queryClient.cancelQueries({ queryKey: ["agent-status"] });
-    queryClient.removeQueries({ queryKey: ["agent-status"] });
+    queryClient.cancelQueries({ queryKey: ["goclaim-status"] });
+    queryClient.removeQueries({ queryKey: ["goclaim-status"] });
   }, [queryClient]);
 
   return {

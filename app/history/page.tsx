@@ -6,14 +6,14 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ClaimHistoryTable } from "@/components/ClaimHistoryTable";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { useAgentStatus, UnauthorizedError } from "@/lib/hooks/useAgentStatus";
+import { useGoClaimStatus, UnauthorizedError } from "@/lib/hooks/useGoClaimStatus";
 import { useSession } from "@/lib/hooks/useSession";
 import { copy } from "@/lib/copy";
 
 export default function HistoryPage() {
   const router = useRouter();
   const { authenticated, checked, refresh } = useSession();
-  const { data: status, isLoading, error, refetch } = useAgentStatus(100, {
+  const { data: status, isLoading, error, refetch } = useGoClaimStatus(100, {
     enabled: checked && authenticated,
   });
 

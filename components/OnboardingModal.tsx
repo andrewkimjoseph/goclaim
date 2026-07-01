@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { type Address } from "viem";
-import { ConnectAgentButton } from "@/components/ConnectAgentButton";
+import { ConnectGoClaimButton } from "@/components/ConnectGoClaimButton";
 import { celebrateSmartAccountLink } from "@/lib/celebrateLink";
 import { copy } from "@/lib/copy";
 
@@ -77,12 +77,18 @@ export function OnboardingModal({
                   <p className="font-display font-bold text-foreground">
                     {copy.onboarding.step2.title}
                   </p>
-                  <p className="text-sm text-foreground/70 mt-1">
-                    {copy.onboarding.step2.body}
+                  <p
+                    className={
+                      linked
+                        ? "text-sm text-foreground/70 font-display font-bold mt-1"
+                        : "text-sm text-foreground/70 mt-1"
+                    }
+                  >
+                    {linked ? copy.connect.linked : copy.onboarding.step2.body}
                   </p>
                   {!linked && (
                     <div className="mt-3">
-                      <ConnectAgentButton
+                      <ConnectGoClaimButton
                         smartAccountAddress={smartAccountAddress as Address}
                         rootAddress={rootAddress as Address | undefined}
                         onConnected={handleConnected}
@@ -90,11 +96,6 @@ export function OnboardingModal({
                         label={copy.onboarding.step2.cta}
                       />
                     </div>
-                  )}
-                  {linked && (
-                    <p className="text-sm text-foreground/70 font-display font-semibold mt-3">
-                      {copy.connect.linked}
-                    </p>
                   )}
                 </div>
               </li>

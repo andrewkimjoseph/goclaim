@@ -132,7 +132,7 @@ export const copy = {
     linkSmartAccount: "Link smart account to GoodDollar",
     goClaimsStart: "Daily GoClaims start",
   },
-  agentStatus: {
+  goclaimStatus: {
     cardTitle: "GoClaim status",
     active: {
       label: "Active",
