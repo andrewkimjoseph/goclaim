@@ -56,6 +56,27 @@ export function ConnectAgentButton({
     address &&
     address.toLowerCase() !== expectedRoot;
 
+  function isTransactionNotFoundError(error: unknown): boolean {
+    if (!(error instanceof Error)) return false;
+    return /could not be found/i.test(error.message);
+  }
+
+  async function logConnectAccount(txHash: string) {
+    try {
+      const res = await fetch("/api/agent/connect-log", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ txHash }),
+      });
+      if (!res.ok) {
+        console.error("Failed to log connectAccount:", await res.text());
+      }
+    } catch (err) {
+      console.error("Failed to log connectAccount:", err);
+    }
+  }
+
   async function handleConnect() {
     setLocalError(null);
 
@@ -80,22 +101,15 @@ export function ConnectAgentButton({
       setIsPending(false);
       setIsConfirming(true);
 
-      await browserPublicClient.waitForTransactionReceipt({ hash });
-
       try {
-        const res = await fetch("/api/agent/connect-log", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ txHash: hash }),
-        });
-        if (!res.ok) {
-          console.error("Failed to log connectAccount:", await res.text());
-        }
+        await browserPublicClient.waitForTransactionReceipt({ hash });
       } catch (err) {
-        console.error("Failed to log connectAccount:", err);
+        if (!isTransactionNotFoundError(err)) {
+          throw err;
+        }
       }
 
+      await logConnectAccount(hash);
       await refetchConnected();
       onConnected?.();
     } catch (err) {

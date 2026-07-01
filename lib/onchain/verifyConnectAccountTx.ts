@@ -10,7 +10,22 @@ import { publicClient } from "./config";
 import { stripDataSuffix } from "./attribution";
 import { getLinkStatus } from "./eligibility";
 
-export async function verifyConnectAccountTx({
+function isTransactionNotFoundError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return /could not be found/i.test(error.message);
+}
+
+export async function assertConnectAccountLinked(
+  rootAddress: Address,
+  smartAccountAddress: Address
+): Promise<void> {
+  const link = await getLinkStatus(smartAccountAddress, rootAddress);
+  if (!link.linkComplete) {
+    throw new Error("Smart account is not linked to user root on-chain");
+  }
+}
+
+async function verifyConnectAccountTxDetails({
   txHash,
   rootAddress,
   smartAccountAddress,
@@ -19,13 +34,25 @@ export async function verifyConnectAccountTx({
   rootAddress: Address;
   smartAccountAddress: Address;
 }): Promise<void> {
-  const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
+  let receipt;
+  try {
+    receipt = await publicClient.getTransactionReceipt({ hash: txHash });
+  } catch (error) {
+    if (isTransactionNotFoundError(error)) return;
+    throw error;
+  }
 
   if (receipt.status !== "success") {
     throw new Error("Transaction did not succeed");
   }
 
-  const tx = await publicClient.getTransaction({ hash: txHash });
+  let tx;
+  try {
+    tx = await publicClient.getTransaction({ hash: txHash });
+  } catch (error) {
+    if (isTransactionNotFoundError(error)) return;
+    throw error;
+  }
 
   if (tx.from.toLowerCase() !== rootAddress.toLowerCase()) {
     throw new Error("Transaction signer does not match user root wallet");
@@ -49,9 +76,21 @@ export async function verifyConnectAccountTx({
   if (accountArg.toLowerCase() !== smartAccountAddress.toLowerCase()) {
     throw new Error("connectAccount target does not match agent smart account");
   }
+}
 
-  const link = await getLinkStatus(smartAccountAddress, rootAddress);
-  if (!link.linkComplete) {
-    throw new Error("Smart account is not linked to user root on-chain");
-  }
+export async function verifyConnectAccountTx({
+  txHash,
+  rootAddress,
+  smartAccountAddress,
+}: {
+  txHash: Hash;
+  rootAddress: Address;
+  smartAccountAddress: Address;
+}): Promise<void> {
+  await assertConnectAccountLinked(rootAddress, smartAccountAddress);
+  await verifyConnectAccountTxDetails({
+    txHash,
+    rootAddress,
+    smartAccountAddress,
+  });
 }
