@@ -2,14 +2,19 @@
 
 import { createSiweMessage } from "viem/siwe";
 import { useAccount, useSignMessage } from "wagmi";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { celo } from "wagmi/chains";
+import { friendlySignInError } from "@/lib/friendlyTxError";
 
 export function useSiweAuth() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setError(null);
+  }, [address]);
 
   const signIn = useCallback(async () => {
     if (!address) {
@@ -60,8 +65,7 @@ export function useSiweAuth() {
 
       return true;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Sign-in failed";
-      setError(msg);
+      setError(friendlySignInError(err as { message?: string }));
       return false;
     } finally {
       setIsLoading(false);

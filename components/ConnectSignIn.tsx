@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { type Address } from "viem";
@@ -103,6 +103,11 @@ export function ConnectSignIn({
     sdkReady,
     isRedirecting,
   } = useWalletVerification(verificationAddress);
+
+  useEffect(() => {
+    setVerificationError(null);
+    setIsGeneratingLink(false);
+  }, [walletAddress]);
 
   const walletMatchesSession =
     authenticated &&
