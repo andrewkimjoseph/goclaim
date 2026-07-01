@@ -52,30 +52,28 @@ export const copy = {
     title: "Set up GoClaim",
     step1: {
       title: "Smart account created",
-      body: "Your GoClaim smart account is ready. It will GoClaim G$ and send it to your wallet.",
+      body: "G$ GoClaimed to your wallet.",
     },
     step2: {
       title: "Link to GoodDollar",
-      body: "Confirm once in your wallet.",
+      body: "Approve once.",
       cta: "Approve",
     },
     step3: {
       title: "All set",
-      bodyLinked: (claimSchedule: string) =>
-        `First GoClaim runs ${claimSchedule}. G$ goes to your wallet.`,
-      bodyPending: (claimSchedule: string) =>
-        `Complete step 2 to enable daily GoClaims ${claimSchedule}.`,
+      bodyLinked: "Daily GoClaims enabled.",
+      bodyPending: "Finish step 2.",
     },
-    goToDashboard: "Go to Dashboard",
+    goToDashboard: "Dashboard",
   },
   connect: {
     cta: "Link smart account to GoodDollar",
     confirming: "Confirming...",
     confirmInWallet: "Confirm in wallet...",
-    linked: "Smart account linked — GoClaim is ready",
+    linked: "Linked — ready",
     connectWalletFirst: "Connect your GoodDollar wallet first.",
     switchWallet: "Switch to the wallet you signed in with.",
-    wrongWallet: "Connected wallet does not match your signed-in wallet.",
+    wrongWallet: "Wrong wallet — switch to the one you signed in with.",
   },
   dashboard: {
     headlineActive: "You're all set",
@@ -139,8 +137,7 @@ export const copy = {
   },
   goClaimHistory: {
     title: "GoClaim History",
-    empty: (claimSchedule: string) =>
-      `No GoClaims yet. After you link your smart account, the first GoClaim runs ${claimSchedule}.`,
+    empty: "No GoClaims yet.",
     date: "Date",
     status: "Status",
     amount: "G$ sent",
@@ -154,6 +151,7 @@ export const copy = {
   time: {
     claimScheduleUtc: "daily at 12:00 PM UTC",
     claimScheduleShort: "12:00 PM UTC daily",
+    claimScheduleYourTime: "your time",
   },
   faqs: {
     title: "FAQs",
@@ -226,9 +224,10 @@ export function formatClaimSchedule(): string {
     const local = utcNoon.toLocaleTimeString(undefined, {
       hour: "numeric",
       minute: "2-digit",
-      timeZoneName: "short",
     });
-    return `${base} (${local})`;
+    if (utcNoon.getTimezoneOffset() === 0) return base;
+
+    return `${base} (${local} ${copy.time.claimScheduleYourTime})`;
   } catch {
     return base;
   }
