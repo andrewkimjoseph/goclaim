@@ -49,7 +49,7 @@ export const copy = {
     walletChangedSigningOut: "Wallet changed - signing you out...",
   },
   onboarding: {
-    title: "Set up GoClaim",
+    title: "Set up GoClaim account",
     step1: {
       title: "Smart account created",
       body: "G$ GoClaimed to your wallet.",
@@ -82,8 +82,25 @@ export const copy = {
       `GoClaims run ${claimSchedule}.`,
     subheadSetup: "Link to GoodDollar to start GoClaiming.",
     loading: "Loading...",
-    setupGoClaim: "Set up GoClaim",
-    settingUpGoClaim: "Setting up...",
+    setupGoClaim: "Set up GoClaim account",
+    settingUpGoClaim: "Setting up account...",
+    setupHeadline: "Set up GoClaim",
+    setupSubhead: "Create account, approve once in GoodDollar.",
+    setupStepsTitle: "How it works",
+    setupSteps: [
+      {
+        title: "Create account",
+        description: "Your GoClaim smart account is created.",
+      },
+      {
+        title: "Link to GoodDollar",
+        description: "Approve once in your wallet.",
+      },
+      {
+        title: "Daily GoClaims",
+        description: "G$ is sent to your wallet daily.",
+      },
+    ],
     noAgent: "Your GoClaim smart account is not set up yet.",
     streakLabel: "GoClaim Streak",
     streakDays: (n: number) => (n === 1 ? "1 day" : `${n} days`),

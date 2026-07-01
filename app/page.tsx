@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ConnectSignIn } from "@/components/ConnectSignIn";
+import { GettingStartedHero } from "@/components/GettingStartedHero";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useSession } from "@/lib/hooks/useSession";
 import { copy } from "@/lib/copy";
@@ -19,16 +20,8 @@ export default function LandingPage() {
     }
   }, [checked, authenticated, router]);
 
-  async function handleSuccess() {
-    const createRes = await fetch("/api/agent/create", {
-      method: "POST",
-      credentials: "include",
-    });
-    if (createRes.ok) {
-      router.push("/dashboard");
-    } else {
-      router.push("/dashboard");
-    }
+  function handleSuccess() {
+    router.push("/dashboard");
   }
 
   if (checked && authenticated) {
@@ -55,14 +48,12 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1 flex flex-col min-h-0">
-        <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 py-8">
-          <BrandLogo size="hero" alt="" priority />
-          <h1 className="font-display font-extrabold text-4xl tracking-tight leading-tight text-white">
-            {copy.landing.headline}
-          </h1>
-          <p className="text-white/85 text-base leading-relaxed px-2">
-            {copy.landing.subhead}
-          </p>
+        <div className="flex-1 flex flex-col items-center justify-center py-8">
+          <GettingStartedHero
+            headline={copy.landing.headline}
+            subhead={copy.landing.subhead}
+            priority
+          />
         </div>
 
         <div className="w-full pb-2">

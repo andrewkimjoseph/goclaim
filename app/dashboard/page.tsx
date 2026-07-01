@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
+import { GettingStartedHero } from "@/components/GettingStartedHero";
+import { SetupPreviewSteps } from "@/components/SetupPreviewSteps";
 import { AgentStatusCard } from "@/components/AgentStatusCard";
 import { ClaimHistoryTable } from "@/components/ClaimHistoryTable";
 import { DashboardOverviewCard } from "@/components/DashboardOverviewCard";
@@ -110,6 +112,7 @@ export default function DashboardPage() {
 
   const linkStatus = status?.linkStatus ?? "pending";
   const showError = Boolean(error) && !(error instanceof UnauthorizedError);
+  const showNoAgentSetup = Boolean(status && !status.hasAgent && !showError);
 
   if (checked && !authenticated) return null;
 
@@ -131,7 +134,13 @@ export default function DashboardPage() {
         </Link>
       </header>
 
-      <main className="app-shell-scroll py-6 space-y-4">
+      <main
+        className={
+          showNoAgentSetup
+            ? "flex-1 min-h-0 flex flex-col"
+            : "app-shell-scroll py-6 space-y-4"
+        }
+      >
         {isLoading && !status ? (
           <DashboardSkeleton />
         ) : showError ? (
@@ -143,20 +152,29 @@ export default function DashboardPage() {
               {copy.dashboard.retry}
             </button>
           </div>
-        ) : !status?.hasAgent ? (
-          <div className="flex flex-col gap-4 w-full">
-            <p className="text-white/80 text-center">{copy.dashboard.noAgent}</p>
-            <button
-              onClick={handleSetupGoClaim}
-              disabled={isCreatingAgent}
-              className="btn-primary"
-            >
-              {isCreatingAgent
-                ? copy.dashboard.settingUpGoClaim
-                : copy.dashboard.setupGoClaim}
-            </button>
-          </div>
-        ) : (
+        ) : showNoAgentSetup ? (
+          <>
+            <div className="flex-1 flex flex-col items-center justify-center py-10 px-1 min-h-0 overflow-y-auto overscroll-contain">
+              <GettingStartedHero
+                headline={copy.dashboard.setupHeadline}
+                subhead={copy.dashboard.setupSubhead}
+              >
+                <SetupPreviewSteps />
+              </GettingStartedHero>
+            </div>
+            <div className="shrink-0 pb-2">
+              <button
+                onClick={handleSetupGoClaim}
+                disabled={isCreatingAgent}
+                className="btn-primary"
+              >
+                {isCreatingAgent
+                  ? copy.dashboard.settingUpGoClaim
+                  : copy.dashboard.setupGoClaim}
+              </button>
+            </div>
+          </>
+        ) : status ? (
           <>
             <div className="space-y-1">
               <p className="font-display font-bold text-lg text-white tracking-tight">
@@ -216,7 +234,7 @@ export default function DashboardPage() {
               />
             )}
           </>
-        )}
+        ) : null}
       </main>
 
       <footer className="app-shell-footer">
